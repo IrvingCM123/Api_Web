@@ -15,9 +15,11 @@ const prisma = new client_1.PrismaClient();
 // Controlador para obtener todos los préstamos y devoluciones
 const getAllPrestamos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const prestamosDevoluciones = yield prisma.prestamoDevolucion.findMany({ where: {
+        const prestamosDevoluciones = yield prisma.prestamoDevolucion.findMany({
+            where: {
                 Status: true,
-            } });
+            }
+        });
         res.json(prestamosDevoluciones);
     }
     catch (error) {
@@ -28,9 +30,11 @@ const getAllPrestamos = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.getAllPrestamos = getAllPrestamos;
 const getAllDevoluciones = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const prestamosDevoluciones = yield prisma.prestamoDevolucion.findMany({ where: {
+        const prestamosDevoluciones = yield prisma.prestamoDevolucion.findMany({
+            where: {
                 Status: false,
-            } });
+            }
+        });
         res.json(prestamosDevoluciones);
     }
     catch (error) {
@@ -119,6 +123,26 @@ const createPrestamo = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 ID_Usuario: usuario.ID_Usuario,
             },
         });
+        if (gestionUsuario.Prestamos_Pendientes >= 3) {
+            yield prisma.gestionUsuario.update({
+                where: {
+                    ID_Usuario: usuario.ID_Usuario,
+                },
+                data: {
+                    Candidato_Prestamo: false,
+                },
+            });
+        }
+        else {
+            yield prisma.gestionUsuario.update({
+                where: {
+                    ID_Usuario: usuario.ID_Usuario,
+                },
+                data: {
+                    Candidato_Prestamo: true,
+                },
+            });
+        }
         if (!gestionUsuario || !gestionUsuario.Candidato_Prestamo) {
             return res.status(400).json({ error: 'El usuario no es candidato a préstamo' });
         }
@@ -181,6 +205,11 @@ const realizarDevolucion = (req, res) => __awaiter(void 0, void 0, void 0, funct
         const usuario = yield prisma.user.findUnique({
             where: { ID_Usuario: prestamo === null || prestamo === void 0 ? void 0 : prestamo.ID_Usuario },
         });
+        const gestionUsuario = yield prisma.gestionUsuario.findUnique({
+            where: {
+                ID_Usuario: usuario === null || usuario === void 0 ? void 0 : usuario.ID_Usuario,
+            },
+        });
         if (!prestamo) {
             return res.status(404).json({ error: 'Préstamo no encontrado' });
         }
@@ -229,10 +258,20 @@ const realizarDevolucion = (req, res) => __awaiter(void 0, void 0, void 0, funct
                     ID_Usuario: usuario === null || usuario === void 0 ? void 0 : usuario.ID_Usuario,
                 },
                 data: {
-                    Prestamos_Pendientes: -1,
-                    Devoluciones_Realizadas: +1
+                    Prestamos_Pendientes: gestionUsuario.Prestamos_Pendientes - 1,
+                    Devoluciones_Realizadas: gestionUsuario.Devoluciones_Realizadas + 1,
                 }
             });
+            if (gestionUsuario.Prestamos_Pendientes < 3) {
+                yield prisma.gestionUsuario.update({
+                    where: {
+                        ID_Usuario: usuario === null || usuario === void 0 ? void 0 : usuario.ID_Usuario,
+                    },
+                    data: {
+                        Candidato_Prestamo: true,
+                    }
+                });
+            }
         }
         // Buscar el registro correspondiente en el historial de préstamos
         const historialPrestamo = yield prisma.historialPrestamo.findUnique({

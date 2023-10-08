@@ -92,7 +92,7 @@ const createHistorialPrestamo = (req, res) => __awaiter(void 0, void 0, void 0, 
         });
         const cantidadPrestamos = (usuario === null || usuario === void 0 ? void 0 : usuario.historial_prestamo.length) || 0;
         // Actualizar el campo Candidato_Prestamo en GestionUsuario
-        if (cantidadPrestamos >= 3) {
+        if (cantidadPrestamos >= 2) {
             yield prisma.gestionUsuario.update({
                 where: {
                     ID_Usuario: usuario === null || usuario === void 0 ? void 0 : usuario.ID_Usuario,
