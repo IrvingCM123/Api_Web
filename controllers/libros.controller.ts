@@ -116,3 +116,16 @@ export const registerBookInFirestore = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error al registrar el libro en Firestore' });
     }
 };
+
+export const eliminarLibroByID = async (req: Request, res: Response) => {
+    const { isbn } = req.params;
+    try {
+        const deletedLibro = await prisma.libro.delete({
+            where: { ISBN: isbn },
+        });
+        res.json(deletedLibro);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar libro' });
+    }
+}

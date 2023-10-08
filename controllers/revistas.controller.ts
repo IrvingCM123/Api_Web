@@ -114,3 +114,16 @@ export const saveISSN = async (issn: string) => {
         console.error(error);
     }
 };
+
+export const eliminarRevista = async (req: Request, res: Response) => {
+    const { issn } = req.params;
+    try {
+        const revista = await prisma.revista.delete({
+            where: { ISSN: issn },
+        });
+        res.json(revista);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar la revista' });
+    }
+}

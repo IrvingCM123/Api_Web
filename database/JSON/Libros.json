@@ -1,0 +1,63 @@
+{
+    "123133": {
+        "Titulo": "El gato que cayó del cielo",
+        "Url_Portada": "https://firebasestorage.googleapis.com/v0/b/biblioteca-f2285.appspot.com/o/Multimedia%2FImagenes%2FLibros%2FOIP%20(1).jpeg?alt=media&token=64846972-65d7-4251-9d0d-ca0d07e1e62b",
+        "Resena": "Un gato..... cayó del cielo. Fin",
+        "Autor": "Takashi Hirade",
+        "Clasificacion_Edad": "AA",
+        "Genero": "Aventura",
+        "Editorial": "Panini",
+        "Fecha_Publicacion": "24/10/2022"
+    
+    },
+    "9788467038582": {
+        "Titulo": "La sombra del viento",
+        "Url_Portada": "https://images-na.ssl-images-amazon.com/images/I/51vLZ%2BZ%2BZTL._SX322_BO1,204,203,200_.jpg",
+        "Resena": "En la Barcelona de los años 50, un joven llamado Daniel Sempere se adentra en el Cementerio de los Libros Olvidados para encontrar un libro que cambiará su vida para siempre.",
+        "Autor": "Carlos Ruiz Zafón",
+        "Clasificacion_Edad": "B",
+        "Genero": "Misterio",
+        "Editorial": "Planeta",
+        "Fecha_Publicacion": "01/01/2001"
+    },
+    "9788467038583": {
+        "Titulo": "El prisionero del cielo",
+        "Url_Portada": "https://images-na.ssl-images-amazon.com/images/I/51vLZ%2BZ%2BZTL._SX322_BO1,204,203,200_.jpg",
+        "Resena": "En la Barcelona de los años 50, un joven llamado Daniel Sempere se adentra en el Cementerio de los Libros Olvidados para encontrar un libro que cambiará su vida para siempre.",
+        "Autor": "Carlos Ruiz Zafón",
+        "Clasificacion_Edad": "B",
+        "Genero": "Misterio",
+        "Editorial": "Planeta",
+        "Fecha_Publicacion": "01/01/2001"
+    },
+    "9788467038584": {
+        "Titulo": "El juego del ángel",
+        "Url_Portada": "https://images-na.ssl-images-amazon.com/images/I/51vLZ%2BZ%2BZTL._SX322_BO1,204,203,200_.jpg",
+        "Resena": "En la Barcelona de los años 50, un joven llamado Daniel Sempere se adentra en el Cementerio de los Libros Olvidados para encontrar un libro que cambiará su vida para siempre.",
+        "Autor": "Carlos Ruiz Zafón",
+        "Clasificacion_Edad": "B",
+        "Genero": "Misterio",
+        "Editorial": "Planeta",
+        "Fecha_Publicacion": "01/01/2001"
+    },
+    "9788467038585": {
+        "Titulo": "El laberinto de los espíritus",
+        "Url_Portada": "https://images-na.ssl-images-amazon.com/images/I/51vLZ%2BZ%2BZTL._SX322_BO1,204,203,200_.jpg",
+        "Resena": "En la Barcelona de los años 50, un joven llamado Daniel Sempere se adentra en el Cementerio de los Libros Olvidados para encontrar un libro que cambiará su vida para siempre.",
+        "Autor": "Carlos Ruiz Zafón",
+        "Clasificacion_Edad": "B",
+        "Genero": "Misterio",
+        "Editorial": "Planeta",
+        "Fecha_Publicacion": "01/01/2001"
+    },
+    "9788467038586": {
+        "Titulo": "Marina",
+        "Url_Portada": "https://images-na.ssl-images-amazon.com/images/I/51vLZ%2BZ%2BZTL._SX322_BO1,204,203,200_.jpg",
+        "Resena": "En la Barcelona de los años 50, un joven llamado Daniel Sempere se adentra en el Cementerio de los Libros Olvidados para encontrar un libro que cambiará su vida para siempre.",
+        "Autor": "Carlos Ruiz Zafón",
+        "Clasificacion_Edad": "B",
+        "Genero": "Misterio",
+        "Editorial": "Planeta",
+        "Fecha_Publicacion": "01/01/2001"
+    }
+}

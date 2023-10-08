@@ -36,6 +36,11 @@ const express_1 = require("express");
 const client_1 = require("@prisma/client");
 const librosControllers = __importStar(require("../controllers/libros.controller"));
 const usuariosControllers = __importStar(require("../controllers/user.controller"));
+const revistasControllers = __importStar(require("../controllers/revistas.controller"));
+const gestionUsuariosControllers = __importStar(require("../controllers/gestionuser.controller"));
+const prestamosControllers = __importStar(require("../controllers/prestamo_devolucion.controller"));
+const historialPrestamoControllers = __importStar(require("../controllers/historialPrestamo.controller"));
+const inventarioControllers = __importStar(require("../controllers/inventario.controller"));
 const router = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
 //Controladores para Libros
@@ -47,11 +52,26 @@ const prisma = new client_1.PrismaClient();
  */
 router.get('/libros/:isbn', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        librosControllers.getAllAvailableISBNs(req, res);
+        librosControllers.getBookInfoByISBN(req, res);
     }
     catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al obtener información del libro desde Firestore' });
+    }
+}));
+/**
+ * Controlador para eliminar un libro por ISBN desde Firestore y la base de datos Prisma.
+ * NOTA: Este controlador no se utiliza en la aplicación, pero se deja como ejemplo de cómo eliminar un libro.
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+router.delete('/libros/:isbn', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        librosControllers.eliminarLibroByID(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar el libro desde Firestore' });
     }
 }));
 /**
@@ -169,6 +189,359 @@ router.delete('/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, func
     catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al eliminar usuario' });
+    }
+}));
+/**
+ * Controlador para obtener información de una revista por ISSN desde Firestore.
+ *
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+router.get('/revistas/:issn', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        revistasControllers.getMagazineInfoByISSN(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener información de la revista desde Firestore' });
+    }
+}));
+/**
+ * Controlador para obtener todos los ISSN disponibles desde la base de datos Prisma.
+ *
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+router.get('/issn/disponibles', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        revistasControllers.getAllAvailableISSNs(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener todos los ISSN disponibles' });
+    }
+}));
+/**
+ * Controlador para registrar una revista en Firestore y en la base de datos Prisma.
+ *
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+router.post('/revistas/:issn', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        revistasControllers.registerMagazineInFirestore(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al registrar la revista en Firestore' });
+    }
+}));
+/**
+ * Controlador para eliminar una revista por ISSN desde Firestore y la base de datos Prisma.
+ * NOTA: Este controlador no se utiliza en la aplicación, pero se deja como ejemplo de cómo eliminar una revista.
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+router.delete('/revistas/:issn', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        revistasControllers.eliminarRevista(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar la revista desde Firestore' });
+    }
+}));
+/**
+ * Controlador para obtener todos los registros de GestionUsuario.
+ *
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+router.get('/gestion-usuarios', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        gestionUsuariosControllers.getAllGestionUsuarios(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener gestión de usuarios' });
+    }
+}));
+/**
+ * Controlador para obtener un GestionUsuario por su ID.
+ *
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+router.get('/gestion-usuarios/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        gestionUsuariosControllers.getGestionUsuarioById(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener gestión de usuario por ID' });
+    }
+}));
+/**
+ * Controlador para actualizar un registro de GestionUsuario por su ID.
+ *
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+router.put('/gestion-usuarios/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { Candidato_Prestamo } = req.body;
+    try {
+        gestionUsuariosControllers.updateGestionUsuario(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar gestión de usuario' });
+    }
+}));
+/**
+ * Controlador para eliminar un registro de GestionUsuario por su ID.
+ *
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+router.delete('/gestion-usuarios/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    if (!gestionUsuariosControllers.isValidUserId(Number(id))) {
+        return res.status(404).json({ error: 'Gestión de usuario no encontrada' });
+    }
+    try {
+        gestionUsuariosControllers.deleteGestionUsuario(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar gestión de usuario' });
+    }
+}));
+// Ruta para crear un nuevo préstamo/devolución
+router.post('/prestamos-devoluciones', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        prestamosControllers.createPrestamo(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear préstamo/devolución' });
+    }
+}));
+// Ruta para realizar una devolución
+router.post('/prestamos-devoluciones/:ID_Prestamo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { ID_Prestamo } = req.params;
+    try {
+        prestamosControllers.realizarDevolucion(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al realizar la devolución' });
+    }
+}));
+// Ruta para obtener todos los préstamos
+router.get('/prestamos', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        prestamosControllers.getAllPrestamos(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener préstamos y devoluciones' });
+    }
+}));
+// Ruta para obtener todos las devoluciones
+router.get('/devoluciones', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        prestamosControllers.getAllDevoluciones(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener préstamos y devoluciones' });
+    }
+}));
+// Ruta para eliminar todos los préstamos
+router.delete('/prestamos-devoluciones', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        prestamosControllers.deleteAllPrestamos(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar préstamos' });
+    }
+}));
+// Ruta para eliminar un préstamo por ID
+router.delete('/prestamos-devoluciones/:ID_Prestamo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { ID_Prestamo } = req.params;
+    try {
+        prestamosControllers.deletePrestamosByID(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar préstamo por ID' });
+    }
+}));
+// Ruta para eliminar todas las devoluciones
+router.delete('/devoluciones', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        prestamosControllers.deleteAllDevoluciones(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar devoluciones' });
+    }
+}));
+// Ruta para eliminar una devolución por ID
+router.delete('/devoluciones/:ID_Prestamo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { ID_Prestamo } = req.params;
+    try {
+        prestamosControllers.deleteDevolucionesByID(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar devolución por ID' });
+    }
+}));
+/**
+ * Ruta para obtener el historial de préstamos y devoluciones de un usuario por su ID.
+ * Ejemplo de uso: GET /historial-prestamo/123
+ */
+router.get('/historial-prestamo/:ID_Usuario', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        historialPrestamoControllers.getHistorialPrestamoByUserID(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener el historial de préstamos y devoluciones' });
+    }
+}));
+/**
+ * Ruta para obtener el historial de préstamos y devoluciones de un usuario por su ID.
+ * Ejemplo de uso: GET /historial-prestamo/123
+ */
+router.get('/historial-devolucion/:ID_Usuario', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        historialPrestamoControllers.getHistorialDevolcionesByUserID(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener el historial de préstamos y devoluciones' });
+    }
+}));
+/**
+ * Ruta para crear un nuevo registro en el historial de préstamos y devoluciones.
+ * Ejemplo de uso: POST /historial-prestamo
+ */
+router.post('/historial-prestamo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        historialPrestamoControllers.createHistorialPrestamo(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un registro en el historial de préstamos y devoluciones' });
+    }
+}));
+/**
+ * Ruta para obtener todos los préstamos y devoluciones pendientes para un usuario específico.
+ * Ejemplo de uso: GET /historial-prestamo/pendientes/123
+ */
+router.get('/historial-prestamo/pendientes/:ID_Usuario', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        historialPrestamoControllers.getPrestamosDevPendientesByUserID(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los préstamos y devoluciones pendientes' });
+    }
+}));
+/**
+ * Ruta para actualizar un registro en el historial de préstamos y devoluciones.
+ * Ejemplo de uso: PUT /historial-prestamo/456
+ */
+router.put('/historial-prestamo/:ID_Historial', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        historialPrestamoControllers.updateHistorialPrestamo(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar el registro de HistorialPrestamo' });
+    }
+}));
+/**
+ * Ruta para eliminar un registro en el historial de préstamos y devoluciones.
+ * Ejemplo de uso: DELETE /historial-prestamo/789
+ */
+router.delete('/historial-prestamo/:ID_Historial', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        historialPrestamoControllers.deleteHistorialPrestamo(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar el registro de HistorialPrestamo' });
+    }
+}));
+/**
+ * Ruta para crear un nuevo registro en el inventario.
+ * Ejemplo de uso: POST /inventario
+ */
+router.post('/inventario', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        inventarioControllers.createInventario(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un registro en el inventario' });
+    }
+}));
+/**
+ * Ruta para obtener todos los registros de inventario.
+ * Ejemplo de uso: GET /inventario
+ */
+router.get('/inventario', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        inventarioControllers.getAllInventario(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener registros de inventario' });
+    }
+}));
+/**
+ * Ruta para obtener un registro de inventario por su ID.
+ * Ejemplo de uso: GET /inventario/123
+ */
+router.get('/inventario/:ID_Articulo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        inventarioControllers.getInventarioByID(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener un registro de inventario' });
+    }
+}));
+/**
+ * Ruta para actualizar un registro de inventario por su ID.
+ * Ejemplo de uso: PUT /inventario/456
+ */
+router.put('/inventario/:ID_Articulo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        inventarioControllers.updateInventarioByID(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar el registro de inventario' });
+    }
+}));
+/**
+ * Ruta para eliminar un registro de inventario por su ID.
+ * Ejemplo de uso: DELETE /inventario/789
+ */
+router.delete('/inventario/:ID_Articulo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        inventarioControllers.deleteInventarioByID(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar el registro de inventario' });
     }
 }));
 exports.default = router;

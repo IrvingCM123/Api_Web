@@ -33,7 +33,7 @@ export const getUserByEmail = async (req: Request, res: Response) => {
 };
 
 export const createUser = async (req: Request, res: Response) => {
-  const { url_imagen, Nombre_Usuario, Correo_Usuario, Contrasena_Usuario } = req.body;
+  const { url_imagen, Nombre_Usuario, Correo_Usuario, Contrasena_Usuario, ApellidoM_Usuario, ApellidoP_Usuario } = req.body;
   try {
     const newUser = await prisma.user.create({
       data: {
@@ -41,11 +41,15 @@ export const createUser = async (req: Request, res: Response) => {
         Nombre_Usuario,
         Correo_Usuario,
         Contrasena_Usuario,
+        ApellidoM_Usuario,
+        ApellidoP_Usuario,
         // Agrega automáticamente una entrada en GestionUsuario
         gestion_usuarios: {
           create: {
-            Candidato_Prestamo: false,
+            Candidato_Prestamo: true,
             Fecha_Registro: new Date().toISOString().substring(0, 10), // Fecha de registro actual en formato YYYY-MM-DD
+            Devoluciones_Realizadas: 0,
+            Prestamos_Pendientes: 0,
           },
         },
       },
@@ -57,10 +61,9 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-
 export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { url_imagen, Nombre_Usuario, Correo_Usuario, Contrasena_Usuario } = req.body;
+  const { url_imagen, Nombre_Usuario, Correo_Usuario, Contrasena_Usuario, ApellidoM_Usuario, ApellidoP_Usuario } = req.body;
   if (!isValidId(id)) {
     return res.status(400).json({ error: 'ID no válido' });
   }
@@ -72,6 +75,8 @@ export const updateUser = async (req: Request, res: Response) => {
         Nombre_Usuario,
         Correo_Usuario,
         Contrasena_Usuario,
+        ApellidoM_Usuario,
+        ApellidoP_Usuario
       },
     });
     res.json(updatedUser);
@@ -83,6 +88,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
+  console.log(id);
   if (!isValidId(id)) {
     return res.status(400).json({ error: 'ID no válido' });
   }

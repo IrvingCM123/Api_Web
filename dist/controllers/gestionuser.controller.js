@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteGestionUsuario = exports.updateGestionUsuario = exports.createGestionUsuario = exports.getGestionUsuarioById = exports.getAllGestionUsuarios = void 0;
+exports.createGestionUsuario = exports.deleteGestionUsuario = exports.updateGestionUsuario = exports.getGestionUsuarioById = exports.getAllGestionUsuarios = exports.isValidFechaRegistro = exports.isValidUserId = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 // Validador para ID de Usuario
@@ -21,15 +21,27 @@ const isValidUserId = (userId) => __awaiter(void 0, void 0, void 0, function* ()
     });
     return !!user;
 });
+exports.isValidUserId = isValidUserId;
 // Validador para Fecha de Registro (debe tener un formato específico)
 const isValidFechaRegistro = (fecha) => {
     return /^\d{4}-\d{2}-\d{2}$/.test(fecha);
 };
+exports.isValidFechaRegistro = isValidFechaRegistro;
 // Controlador para obtener todos los registros de GestionUsuario
+// Controlador para obtener todos los registros de GestionUsuario con información de usuario
 const getAllGestionUsuarios = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const gestionUsuarios = yield prisma.gestionUsuario.findMany();
-        res.json(gestionUsuarios);
+        const usuariosPromises = gestionUsuarios.map((gestionUsuario) => __awaiter(void 0, void 0, void 0, function* () {
+            const usuario = yield prisma.user.findUnique({
+                where: {
+                    ID_Usuario: gestionUsuario.ID_Usuario,
+                },
+            });
+            return Object.assign(Object.assign({}, gestionUsuario), { Correo_Usuario: usuario === null || usuario === void 0 ? void 0 : usuario.Correo_Usuario });
+        }));
+        const gestionUsuariosConUsuarios = yield Promise.all(usuariosPromises);
+        res.json(gestionUsuariosConUsuarios);
     }
     catch (error) {
         console.error(error);
@@ -39,17 +51,27 @@ const getAllGestionUsuarios = (req, res) => __awaiter(void 0, void 0, void 0, fu
 exports.getAllGestionUsuarios = getAllGestionUsuarios;
 // Controlador para obtener un GestionUsuario por su ID
 const getGestionUsuarioById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    if (!isValidUserId(Number(id))) {
-        return res.status(404).json({ error: 'Gestión de usuario no encontrada' });
-    }
+    const { id } = req.params; // El "id" aquí será el correo electrónico
     try {
+        // Buscar al usuario por correo electrónico
+        const usuario = yield prisma.user.findUnique({
+            where: { Correo_Usuario: (id) },
+        });
+        if (!usuario) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+        // Utilizar el ID del usuario para buscar el "gestionUsuario"
         const gestionUsuario = yield prisma.gestionUsuario.findUnique({
             where: {
-                ID_Usuario: Number(id),
+                ID_Usuario: usuario.ID_Usuario,
             },
         });
-        res.json(gestionUsuario);
+        if (!gestionUsuario) {
+            return res.status(404).json({ error: 'Gestión de usuario no encontrada' });
+        }
+        // Combinar la información del usuario con la información de gestión
+        const gestionUsuarioConUsuario = Object.assign(Object.assign({}, gestionUsuario), { Correo_Usuario: usuario.Correo_Usuario, Nombre: usuario.Nombre_Usuario });
+        res.json(gestionUsuarioConUsuario);
     }
     catch (error) {
         console.error(error);
@@ -57,63 +79,46 @@ const getGestionUsuarioById = (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.getGestionUsuarioById = getGestionUsuarioById;
-// Controlador para crear un nuevo registro de GestionUsuario
-const createGestionUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { ID_Usuario, Candidato_Prestamo, Fecha_Registro } = req.body;
-    if (!isValidUserId(ID_Usuario)) {
-        return res.status(404).json({ error: 'ID de usuario no válido' });
-    }
-    if (!isValidFechaRegistro(Fecha_Registro)) {
-        return res.status(400).json({ error: 'Fecha de registro no válida' });
-    }
-    try {
-        const gestionUsuario = yield prisma.gestionUsuario.create({
-            data: {
-                ID_Usuario,
-                Candidato_Prestamo,
-                Fecha_Registro,
-            },
-        });
-        res.json(gestionUsuario);
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error al crear gestión de usuario' });
-    }
-});
-exports.createGestionUsuario = createGestionUsuario;
 // Controlador para actualizar un registro de GestionUsuario por su ID
 const updateGestionUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { Candidato_Prestamo, Fecha_Registro } = req.body;
-    if (!isValidUserId(Number(id))) {
-        return res.status(404).json({ error: 'Gestión de usuario no encontrada' });
-    }
-    if (!isValidFechaRegistro(Fecha_Registro)) {
-        return res.status(400).json({ error: 'Fecha de registro no válida' });
-    }
+    const { Candidato_Prestamo, Prestamos_Pendientes } = req.body;
+    const usuario = yield prisma.user.findUnique({
+        where: {
+            Correo_Usuario: id,
+        },
+    });
     try {
+        // Verificar el historial de préstamos del usuario
+        const historialPrestamo = yield prisma.historialPrestamo.findMany({
+            where: {
+                ID_Usuario: usuario.ID_Usuario,
+            },
+        });
+        if (historialPrestamo.length > 3) {
+            return res.status(400).json({ error: 'El usuario tiene más de 3 préstamos en su historial' });
+        }
         const gestionUsuario = yield prisma.gestionUsuario.update({
             where: {
-                ID_Usuario: Number(id),
+                ID_Usuario: usuario.ID_Usuario,
             },
             data: {
                 Candidato_Prestamo,
-                Fecha_Registro,
+                Prestamos_Pendientes
             },
         });
         res.json(gestionUsuario);
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error al actualizar gestión de usuario' });
+        res.status(500).json({ error: 'Error al actualizar la gestión de usuario' });
     }
 });
 exports.updateGestionUsuario = updateGestionUsuario;
 // Controlador para eliminar un registro de GestionUsuario por su ID
 const deleteGestionUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    if (!isValidUserId(Number(id))) {
+    if (!(0, exports.isValidUserId)(Number(id))) {
         return res.status(404).json({ error: 'Gestión de usuario no encontrada' });
     }
     try {
@@ -130,3 +135,23 @@ const deleteGestionUsuario = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.deleteGestionUsuario = deleteGestionUsuario;
+const createGestionUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { ID_Usuario, Candidato_Prestamo, Fecha_Registro } = req.body;
+        const nuevoGestionUsuario = yield prisma.gestionUsuario.create({
+            data: {
+                ID_Usuario: Number(ID_Usuario),
+                Candidato_Prestamo,
+                Fecha_Registro,
+                Prestamos_Pendientes: 0,
+                Devoluciones_Realizadas: 0, // Inicializamos en 0
+            },
+        });
+        res.status(201).json(nuevoGestionUsuario);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un objeto de GestionUsuario' });
+    }
+});
+exports.createGestionUsuario = createGestionUsuario;

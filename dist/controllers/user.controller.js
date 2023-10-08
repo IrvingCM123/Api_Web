@@ -28,7 +28,6 @@ const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.getAllUsers = getAllUsers;
 const getUserByEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.params);
     const { id } = req.params;
     try {
         const user = yield prisma.user.findUnique({
@@ -37,7 +36,7 @@ const getUserByEmail = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (!user) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
-        res.json(user);
+        yield res.json(user);
     }
     catch (error) {
         console.error(error);
@@ -46,7 +45,7 @@ const getUserByEmail = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.getUserByEmail = getUserByEmail;
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { url_imagen, Nombre_Usuario, Correo_Usuario, Contrasena_Usuario } = req.body;
+    const { url_imagen, Nombre_Usuario, Correo_Usuario, Contrasena_Usuario, ApellidoM_Usuario, ApellidoP_Usuario } = req.body;
     try {
         const newUser = yield prisma.user.create({
             data: {
@@ -54,6 +53,17 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 Nombre_Usuario,
                 Correo_Usuario,
                 Contrasena_Usuario,
+                ApellidoM_Usuario,
+                ApellidoP_Usuario,
+                // Agrega automáticamente una entrada en GestionUsuario
+                gestion_usuarios: {
+                    create: {
+                        Candidato_Prestamo: true,
+                        Fecha_Registro: new Date().toISOString().substring(0, 10),
+                        Devoluciones_Realizadas: 0,
+                        Prestamos_Pendientes: 0,
+                    },
+                },
             },
         });
         res.status(201).json(newUser);
@@ -66,7 +76,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.createUser = createUser;
 const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { url_imagen, Nombre_Usuario, Correo_Usuario, Contrasena_Usuario } = req.body;
+    const { url_imagen, Nombre_Usuario, Correo_Usuario, Contrasena_Usuario, ApellidoM_Usuario, ApellidoP_Usuario } = req.body;
     if (!(0, exports.isValidId)(id)) {
         return res.status(400).json({ error: 'ID no válido' });
     }
@@ -78,6 +88,8 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 Nombre_Usuario,
                 Correo_Usuario,
                 Contrasena_Usuario,
+                ApellidoM_Usuario,
+                ApellidoP_Usuario
             },
         });
         res.json(updatedUser);
@@ -90,6 +102,7 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.updateUser = updateUser;
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
+    console.log(id);
     if (!(0, exports.isValidId)(id)) {
         return res.status(400).json({ error: 'ID no válido' });
     }

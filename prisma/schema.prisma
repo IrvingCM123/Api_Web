@@ -16,20 +16,23 @@ model User {
   url_imagen String? @db.VarChar(255)
   // Campo para el nombre de usuario
   Nombre_Usuario String @db.VarChar(30)
+  // Campo para el apellido de usuario
+  ApellidoP_Usuario String @db.VarChar(20)
+  // Campo para el apellido de usuario
+  ApellidoM_Usuario String @db.VarChar(20)
   // Campo para el correo de usuario, único
   Correo_Usuario String @unique @db.VarChar(30)
   // Campo para la contraseña de usuario
   Contrasena_Usuario String @db.VarChar(30)
   // Relación con el modelo GestionUsuario
   gestion_usuarios GestionUsuario[]
-  // Relación con el modelo PrestamoDevolucion
-  prestamos PrestamoDevolucion[]
 
   // Agrega la relación inversa para historial_prestamo
   historial_prestamo HistorialPrestamo[]
+  // Agrega la relación inversa para prestamos
+  prestamos PrestamoDevolucion[]
 }
 
-// Definición del modelo GestionUsuario
 model GestionUsuario {
   // Campo de identificación
   ID_Usuario   Int       @id
@@ -38,8 +41,15 @@ model GestionUsuario {
   // Campo booleano para Candidato_Prestamo
   Candidato_Prestamo Boolean
   // Campo para la Fecha de Registro
-  Fecha_Registro String   @db.VarChar(10)
+  Fecha_Registro String   @db.VarChar(20)
+  // Campo para contar cuántos préstamos tiene pendientes el usuario
+  Prestamos_Pendientes Int
+  // Campo para contar cuántas devoluciones ha hecho el usuario
+  Devoluciones_Realizadas Int
+  // Relación con el modelo HistorialPrestamo
+  historial_prestamo HistorialPrestamo[]
 }
+
 
 // Definición del modelo Libro
 model Libro {
@@ -69,12 +79,12 @@ model PrestamoDevolucion {
   ISBN String? @db.VarChar(20)
   // Campo para el ISSN, opcional
   ISSN String? @db.VarChar(20)
+  // Campo para el ID usuario 
+  ID_Usuario Int
   // Relación con el modelo Revista
   revista Revista? @relation(fields: [ISSN], references: [ISSN])
   // Relación con el modelo Libro
   libro Libro? @relation(fields: [ISBN], references: [ISBN])
-  // Campo para el ID de Usuario
-  ID_Usuario Int
   // Relación con el modelo User
   User User @relation(fields: [ID_Usuario], references: [ID_Usuario])
   // Campo para el estado (booleano)
@@ -87,6 +97,7 @@ model PrestamoDevolucion {
   // Agrega la relación inversa para historial_prestamo
   historial_prestamo HistorialPrestamo[]
 }
+
 
 // Definición del modelo Inventario
 model Inventario {
@@ -103,15 +114,17 @@ model Inventario {
   // Campo para la Sección de Biblioteca
   Seccion_Biblioteca String @db.VarChar(10)
   // Campo para el Número de Copias
-  Numero_Copias String @db.VarChar(10)
+  Numero_Copias Int @db.Integer
   // Campo para el Número de Copias Disponibles
-  Copias_Disponibles String @db.VarChar(10)
+  Copias_Disponibles Int @db.Integer
   // Campo para el Número de Copias Disponibles Mínimas
-  Copias_Disponibles_minimas String @db.VarChar(10)
+  Copias_Disponibles_minimas Int @db.Integer
 }
 
 // Definición del modelo HistorialPrestamo
 model HistorialPrestamo {
+  // Campo de identificación autoincremental
+  ID_Historial Int @id @default(autoincrement())
   // Campo para el ID de Usuario
   ID_Usuario Int
   // Relación con el modelo User
@@ -120,7 +133,12 @@ model HistorialPrestamo {
   ID_Prestamo Int
   // Relación con el modelo PrestamoDevolucion
   PrestamoDevolucion PrestamoDevolucion @relation(fields: [ID_Prestamo], references: [ID_Prestamo])
-
-  // Marca una combinación de campos como única
-  @@id([ID_Usuario, ID_Prestamo])
+  // Campo para la Fecha de Prestamo
+  Fecha_Prestamo String @db.VarChar(20)
+  // Campo para indicar si el préstamo está pendiente
+  Pendiente Boolean
+  
+  // Relación inversa con gestion usuario
+  gestion_usuarios GestionUsuario[]
 }
+

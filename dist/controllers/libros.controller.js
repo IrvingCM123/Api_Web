@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerBookInFirestore = exports.saveISBN = exports.getAllAvailableISBNs = exports.getBookInfoByISBN = void 0;
+exports.eliminarLibroByID = exports.registerBookInFirestore = exports.saveISBN = exports.getAllAvailableISBNs = exports.getBookInfoByISBN = void 0;
 const firebaseconfig_1 = require("../database/firebaseconfig");
 const client_1 = require("@prisma/client");
 const db = firebaseconfig_1.firebaseAdmin.firestore();
@@ -109,3 +109,17 @@ const registerBookInFirestore = (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.registerBookInFirestore = registerBookInFirestore;
+const eliminarLibroByID = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { isbn } = req.params;
+    try {
+        const deletedLibro = yield prisma.libro.delete({
+            where: { ISBN: isbn },
+        });
+        res.json(deletedLibro);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar libro' });
+    }
+});
+exports.eliminarLibroByID = eliminarLibroByID;

@@ -1,163 +1,142 @@
-import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
-
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.realizarDevolucion = exports.createPrestamo = exports.deleteDevolucionesByID = exports.deleteAllDevoluciones = exports.deletePrestamosByID = exports.deleteAllPrestamos = exports.getAllDevoluciones = exports.getAllPrestamos = void 0;
+const client_1 = require("@prisma/client");
+const prisma = new client_1.PrismaClient();
 // Controlador para obtener todos los préstamos y devoluciones
-export const getAllPrestamos = async (req: Request, res: Response) => {
+const getAllPrestamos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const prestamosDevoluciones = await prisma.prestamoDevolucion.findMany(
-            {
-                where: {
-                    Status: true,
-                }
-            }
-        );
+        const prestamosDevoluciones = yield prisma.prestamoDevolucion.findMany({ where: {
+                Status: true,
+            } });
         res.json(prestamosDevoluciones);
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al obtener préstamos y devoluciones' });
     }
-};
-
-export const getAllDevoluciones = async (req: Request, res: Response) => {
+});
+exports.getAllPrestamos = getAllPrestamos;
+const getAllDevoluciones = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const prestamosDevoluciones = await prisma.prestamoDevolucion.findMany(
-            {
-                where: {
-                    Status: false,
-                }
-            }
-        );
+        const prestamosDevoluciones = yield prisma.prestamoDevolucion.findMany({ where: {
+                Status: false,
+            } });
         res.json(prestamosDevoluciones);
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al obtener préstamos y devoluciones' });
     }
-};
-
-
-export const deleteAllPrestamos = async (req: Request, res: Response) => {
+});
+exports.getAllDevoluciones = getAllDevoluciones;
+const deleteAllPrestamos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const prestamos = await prisma.prestamoDevolucion.deleteMany();
+        const prestamos = yield prisma.prestamoDevolucion.deleteMany();
         res.json(prestamos);
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al eliminar préstamos' });
     }
-}
-
-export const deletePrestamosByID = async (req: Request, res: Response) => {
+});
+exports.deleteAllPrestamos = deleteAllPrestamos;
+const deletePrestamosByID = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { ID_Prestamo } = req.params;
     try {
-        const prestamos = await prisma.prestamoDevolucion.delete({
+        const prestamos = yield prisma.prestamoDevolucion.delete({
             where: { ID_Prestamo: Number(ID_Prestamo) },
         });
         res.json(prestamos);
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al eliminar préstamos' });
     }
-}
-
-export const deleteAllDevoluciones = async (req: Request, res: Response) => {
+});
+exports.deletePrestamosByID = deletePrestamosByID;
+const deleteAllDevoluciones = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const devoluciones = await prisma.prestamoDevolucion.deleteMany();
+        const devoluciones = yield prisma.prestamoDevolucion.deleteMany();
         res.json(devoluciones);
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al eliminar devoluciones' });
     }
-}
-
-export const deleteDevolucionesByID = async (req: Request, res: Response) => {
+});
+exports.deleteAllDevoluciones = deleteAllDevoluciones;
+const deleteDevolucionesByID = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { ID_Prestamo } = req.params;
     try {
-        const devoluciones = await prisma.prestamoDevolucion.delete({
+        const devoluciones = yield prisma.prestamoDevolucion.delete({
             where: { ID_Prestamo: Number(ID_Prestamo) },
         });
         res.json(devoluciones);
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al eliminar devoluciones' });
     }
-}
+});
+exports.deleteDevolucionesByID = deleteDevolucionesByID;
 // Controlador para crear un nuevo préstamo/devolución
-export const createPrestamo = async (req: Request, res: Response) => {
+const createPrestamo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let { ISBN, ISSN, ID_Usuario } = req.body;
-
         // Verificar si el ISBN o ISSN existe en el inventario
         const inventario = ISBN
-            ? await prisma.inventario.findFirst({
+            ? yield prisma.inventario.findFirst({
                 where: {
                     ISBN: ISBN,
                 },
             })
             : ISSN
-                ? await prisma.inventario.findFirst({
+                ? yield prisma.inventario.findFirst({
                     where: {
                         ISSN: ISSN,
                     },
                 })
                 : null;
-
         if (!inventario || inventario.Copias_Disponibles <= 1) {
             return res.status(400).json({ error: 'No hay copias disponibles para préstamo' });
         }
-
         // Verificar si el usuario es candidato a préstamo
-        const usuario: any = await prisma.user.findUnique({
+        const usuario = yield prisma.user.findUnique({
             where: { Correo_Usuario: ID_Usuario },
-
         });
-
-        const gestionUsuario: any = await prisma.gestionUsuario.findUnique({
+        const gestionUsuario = yield prisma.gestionUsuario.findUnique({
             where: {
                 ID_Usuario: usuario.ID_Usuario,
             },
         });
-
-        if (gestionUsuario.Prestamos_Pendientes >= 3) {
-            await prisma.gestionUsuario.update({
-                where: {
-                    ID_Usuario: usuario.ID_Usuario,
-                },
-                data: {
-                    Candidato_Prestamo: false,
-                },
-            });
-        } else {
-            await prisma.gestionUsuario.update({
-                where: {
-                    ID_Usuario: usuario.ID_Usuario,
-                },
-                data: {
-                    Candidato_Prestamo: true,
-                },
-            });
-        }
-
         if (!gestionUsuario || !gestionUsuario.Candidato_Prestamo) {
             return res.status(400).json({ error: 'El usuario no es candidato a préstamo' });
         }
-
         // Obtener la fecha actual en formato YYYY-MM-DD
         const fechaPrestamo = new Date().toISOString().substring(0, 10);
-
         // Crear el préstamo/devolución
-        const prestamo = await prisma.prestamoDevolucion.create({
+        const prestamo = yield prisma.prestamoDevolucion.create({
             data: {
                 ISBN: inventario.ISBN,
                 ISSN: inventario.ISSN,
                 Status: true,
                 Fecha_prestamo: fechaPrestamo,
-                Fecha_devolucion: "", // La fecha de devolución se actualizará cuando se realice la devolución
+                Fecha_devolucion: "",
                 ID_Usuario: usuario.ID_Usuario, // Agregar el ID del usuario al préstamo
             },
         });
-
         // Actualizar el inventario
-        await prisma.inventario.update({
+        yield prisma.inventario.update({
             where: {
                 ID_Articulo: inventario.ID_Articulo,
             },
@@ -165,10 +144,8 @@ export const createPrestamo = async (req: Request, res: Response) => {
                 Copias_Disponibles: inventario.Copias_Disponibles - 1,
             },
         });
-
         console.log(usuario.ID_Usuario);
-
-        await prisma.gestionUsuario.update({
+        yield prisma.gestionUsuario.update({
             where: {
                 ID_Usuario: usuario.ID_Usuario,
             },
@@ -176,9 +153,8 @@ export const createPrestamo = async (req: Request, res: Response) => {
                 Prestamos_Pendientes: gestionUsuario.Prestamos_Pendientes + 1,
             },
         });
-
         // Registrar el préstamo en el historial de préstamos
-        await prisma.historialPrestamo.create({
+        yield prisma.historialPrestamo.create({
             data: {
                 ID_Usuario: usuario.ID_Usuario,
                 ID_Prestamo: prestamo.ID_Prestamo,
@@ -186,76 +162,61 @@ export const createPrestamo = async (req: Request, res: Response) => {
                 Pendiente: true, // El préstamo está pendiente
             },
         });
-
         res.status(201).json(prestamo);
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al crear préstamo/devolución' });
     }
-};
-
+});
+exports.createPrestamo = createPrestamo;
 // Controlador para realizar una devolución
-export const realizarDevolucion = async (req: Request, res: Response) => {
+const realizarDevolucion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { ID_Prestamo } = req.params;
-
     try {
         // Verificar si el préstamo existe en la base de datos
-        const prestamo = await prisma.prestamoDevolucion.findUnique({
+        const prestamo = yield prisma.prestamoDevolucion.findUnique({
             where: { ID_Prestamo: Number(ID_Prestamo) },
         });
-
-        const usuario = await prisma.user.findUnique({
-            where: { ID_Usuario: prestamo?.ID_Usuario },
+        const usuario = yield prisma.user.findUnique({
+            where: { ID_Usuario: prestamo === null || prestamo === void 0 ? void 0 : prestamo.ID_Usuario },
         });
-
-        const gestionUsuario: any = await prisma.gestionUsuario.findUnique({
-            where: {
-                ID_Usuario: usuario?.ID_Usuario,
-            },
-        });
-
         if (!prestamo) {
             return res.status(404).json({ error: 'Préstamo no encontrado' });
         }
-
         // Verificar si el préstamo ya ha sido devuelto
         if (prestamo.Status === false) {
             return res.status(400).json({ error: 'El préstamo ya ha sido devuelto' });
         }
-
         // Obtener la fecha actual en formato YYYY-MM-DD
         const fechaDevolucion = new Date().toISOString().substring(0, 10);
-
         // Actualizar la fecha de devolución y establecer el estado del préstamo a devuelto
-        const Devolucion = await prisma.prestamoDevolucion.update({
+        const Devolucion = yield prisma.prestamoDevolucion.update({
             where: { ID_Prestamo: Number(ID_Prestamo) },
             data: {
                 Fecha_devolucion: fechaDevolucion,
                 Status: false,
             },
         });
-
         // Obtener ISBN o ISSN del préstamo
         const ISBN = Devolucion.ISBN;
         const ISSN = Devolucion.ISSN;
-
         // Actualizar el inventario
         const inventario = ISBN
-            ? await prisma.inventario.findFirst({
+            ? yield prisma.inventario.findFirst({
                 where: {
                     ISBN: ISBN,
                 },
             })
             : ISSN
-                ? await prisma.inventario.findFirst({
+                ? yield prisma.inventario.findFirst({
                     where: {
                         ISSN: ISSN,
                     },
                 })
                 : null;
-
         if (inventario) {
-            await prisma.inventario.update({
+            yield prisma.inventario.update({
                 where: {
                     ID_Articulo: inventario.ID_Articulo,
                 },
@@ -263,40 +224,25 @@ export const realizarDevolucion = async (req: Request, res: Response) => {
                     Copias_Disponibles: inventario.Copias_Disponibles + 1,
                 },
             });
-
-            await prisma.gestionUsuario.update({
+            yield prisma.gestionUsuario.update({
                 where: {
-                    ID_Usuario: usuario?.ID_Usuario,
+                    ID_Usuario: usuario === null || usuario === void 0 ? void 0 : usuario.ID_Usuario,
                 },
                 data: {
-                    Prestamos_Pendientes: gestionUsuario.Prestamos_Pendientes - 1,
-                    Devoluciones_Realizadas: gestionUsuario.Devoluciones_Realizadas + 1,
+                    Prestamos_Pendientes: -1,
+                    Devoluciones_Realizadas: +1
                 }
             });
-
-            if (gestionUsuario.Prestamos_Pendientes < 3) {
-                await prisma.gestionUsuario.update({
-                    where: {
-                        ID_Usuario: usuario?.ID_Usuario,
-                    },
-                    data: {
-                        Candidato_Prestamo: true,
-                    }
-                });
-            }
-
         }
-
         // Buscar el registro correspondiente en el historial de préstamos
-        const historialPrestamo = await prisma.historialPrestamo.findUnique({
+        const historialPrestamo = yield prisma.historialPrestamo.findUnique({
             where: {
                 ID_Historial: Number(ID_Prestamo), // Utilizar ID_Historial en lugar de ID_Prestamo
             },
         });
-
         if (historialPrestamo) {
             // Actualizar el registro en el historial de préstamos como no pendiente
-            await prisma.historialPrestamo.update({
+            yield prisma.historialPrestamo.update({
                 where: {
                     ID_Historial: historialPrestamo.ID_Historial,
                 },
@@ -305,10 +251,11 @@ export const realizarDevolucion = async (req: Request, res: Response) => {
                 },
             });
         }
-
         res.json(Devolucion);
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al realizar la devolución' });
     }
-};
+});
+exports.realizarDevolucion = realizarDevolucion;

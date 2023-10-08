@@ -49,7 +49,7 @@ export const getGestionUsuarioById = async (req: Request, res: Response) => {
         const usuario = await prisma.user.findUnique({
             where: { Correo_Usuario: (id) },
         });
-        
+
         if (!usuario) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
@@ -78,7 +78,7 @@ export const getGestionUsuarioById = async (req: Request, res: Response) => {
 // Controlador para actualizar un registro de GestionUsuario por su ID
 export const updateGestionUsuario = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { Candidato_Prestamo } = req.body;
+    const { Candidato_Prestamo, Prestamos_Pendientes } = req.body;
 
     const usuario: any = await prisma.user.findUnique({
         where: {
@@ -87,20 +87,33 @@ export const updateGestionUsuario = async (req: Request, res: Response) => {
     });
 
     try {
+        // Verificar el historial de préstamos del usuario
+        const historialPrestamo = await prisma.historialPrestamo.findMany({
+            where: {
+                ID_Usuario: usuario.ID_Usuario,
+            },
+        });
+
+        if (historialPrestamo.length > 3) {
+            return res.status(400).json({ error: 'El usuario tiene más de 3 préstamos en su historial' });
+        }
+
         const gestionUsuario = await prisma.gestionUsuario.update({
             where: {
                 ID_Usuario: usuario.ID_Usuario,
             },
             data: {
                 Candidato_Prestamo,
+                Prestamos_Pendientes
             },
         });
         res.json(gestionUsuario);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error al actualizar gestión de usuario' });
+        res.status(500).json({ error: 'Error al actualizar la gestión de usuario' });
     }
 };
+
 
 // Controlador para eliminar un registro de GestionUsuario por su ID
 export const deleteGestionUsuario = async (req: Request, res: Response) => {
@@ -120,5 +133,27 @@ export const deleteGestionUsuario = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al eliminar gestión de usuario' });
+    }
+};
+
+
+export const createGestionUsuario = async (req: Request, res: Response) => {
+    try {
+        const { ID_Usuario, Candidato_Prestamo, Fecha_Registro } = req.body;
+
+        const nuevoGestionUsuario = await prisma.gestionUsuario.create({
+            data: {
+                ID_Usuario: Number(ID_Usuario),
+                Candidato_Prestamo,
+                Fecha_Registro,
+                Prestamos_Pendientes: 0, // Inicializamos en 0
+                Devoluciones_Realizadas: 0, // Inicializamos en 0
+            },
+        });
+
+        res.status(201).json(nuevoGestionUsuario);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un objeto de GestionUsuario' });
     }
 };
