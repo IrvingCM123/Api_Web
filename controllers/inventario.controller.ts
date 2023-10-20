@@ -11,6 +11,9 @@ export const createInventario = async (req: Request, res: Response) => {
             Copias_Disponibles_minimas,
         } = req.body;
 
+        console.log(req)
+
+
         // Datos opcionales
         const { ISBN, ISSN, revista, libro } = req.body;
 

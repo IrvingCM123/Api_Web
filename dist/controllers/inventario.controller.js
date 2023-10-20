@@ -16,6 +16,7 @@ const prisma = new client_1.PrismaClient();
 const createInventario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { Seccion_Biblioteca, Numero_Copias, Copias_Disponibles, Copias_Disponibles_minimas, } = req.body;
+        console.log(req);
         // Datos opcionales
         const { ISBN, ISSN, revista, libro } = req.body;
         // Filtrar campos opcionales que no son nulos

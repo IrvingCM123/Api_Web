@@ -84,8 +84,10 @@ export const registerBookInFirestore = async (req: Request, res: Response) => {
         Genero,
         Editorial,
         Fecha_Publicacion,
+        PermitirVenta,
+        PermitirPrestamo,
+        PrecioVenta,
     } = req.body;
-
     try {
         // Verifica si el libro ya existe en Firestore
         const existingBook = db.collection('Libros').doc(isbn);
@@ -105,6 +107,9 @@ export const registerBookInFirestore = async (req: Request, res: Response) => {
             ISBN: isbn,
             Editorial,
             Fecha_Publicacion,
+            PermitirVenta,
+            PermitirPrestamo,
+            PrecioVenta,
         });
 
         // Guarda el ISBN en la base de datos usando el controlador saveISBN

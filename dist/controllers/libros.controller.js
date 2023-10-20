@@ -79,7 +79,7 @@ exports.saveISBN = saveISBN;
 // Controlador para registrar libros en Firestore
 const registerBookInFirestore = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { isbn } = req.params;
-    const { Titulo, Url_Portada, Resena, Autor, Clasificacion_Edad, Genero, Editorial, Fecha_Publicacion, } = req.body;
+    const { Titulo, Url_Portada, Resena, Autor, Clasificacion_Edad, Genero, Editorial, Fecha_Publicacion, PermitirVenta, PermitirPrestamo, PrecioVenta, } = req.body;
     try {
         // Verifica si el libro ya existe en Firestore
         const existingBook = db.collection('Libros').doc(isbn);
@@ -98,6 +98,9 @@ const registerBookInFirestore = (req, res) => __awaiter(void 0, void 0, void 0, 
             ISBN: isbn,
             Editorial,
             Fecha_Publicacion,
+            PermitirVenta,
+            PermitirPrestamo,
+            PrecioVenta,
         });
         // Guarda el ISBN en la base de datos usando el controlador saveISBN
         yield (0, exports.saveISBN)(isbn);

@@ -7,6 +7,10 @@ import * as gestionUsuariosControllers from '../controllers/gestionuser.controll
 import * as prestamosControllers from '../controllers/prestamo_devolucion.controller';
 import * as historialPrestamoControllers from '../controllers/historialPrestamo.controller';
 import * as inventarioControllers from '../controllers/inventario.controller';
+import * as catalogoGenero from '../controllers/catalogoGenero.controller';
+import * as catalogoEditorial from '../controllers/catalogoEditorial.controller';
+import * as catalogoClasificacion from '../controllers/catalogoClasificacion.controller';
+import * as catalogoSeccion from '../controllers/catalogoSeccion.controller';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -521,5 +525,305 @@ router.delete('/inventario/:ID_Articulo', async (req: Request, res: Response) =>
         res.status(500).json({ error: 'Error al eliminar el registro de inventario' });
     }
 });
+
+/**
+ * Ruta para obtener todos los registros de CatalogoGenero.
+ * Ejemplo de uso: GET /catalogo-genero
+ */
+
+router.get('/catalogo-genero', async (req: Request, res: Response) => {
+    try {
+        catalogoGenero.getAllCatalogoGeneros(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener registros de catalogo genero' });
+    }
+}
+);
+
+/**
+ * Ruta para obtener un registro de CatalogoGenero por su ID.
+ * Ejemplo de uso: GET /catalogo-genero/123
+ */
+
+router.get('/catalogo-genero/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoGenero.getCatalogoGeneroById(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener un registro de catalogo genero' });
+    }
+}
+);
+
+/**
+ * Ruta para crear un registro de CatalogoGenero.
+ * Ejemplo de uso: POST /catalogo-genero
+ */
+
+router.post('/catalogo-genero', async (req: Request, res: Response) => {
+    try {
+        catalogoGenero.createCatalogoGenero(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un registro de catalogo genero' });
+    }
+}
+);
+
+/**
+ * Ruta para actualizar un registro de CatalogoGenero por su ID.
+ * Ejemplo de uso: PUT /catalogo-genero/456
+ */
+
+router.put('/catalogo-genero/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoGenero.updateCatalogoGenero(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar un registro de catalogo genero' });
+    }
+}
+);
+
+/**
+ * Ruta para eliminar un registro de CatalogoGenero por su ID.
+ * Ejemplo de uso: DELETE /catalogo-genero/789
+ */
+
+router.delete('/catalogo-genero/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoGenero.deleteCatalogoGenero(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar un registro de catalogo genero' });
+    }
+}
+);
+
+/**
+ * Ruta para obtener todos los registros de CatalogoEditorial.
+ * Ejemplo de uso: GET /catalogo-editorial
+ */
+
+router.get('/catalogo-editorial', async (req: Request, res: Response) => {
+    try {
+        catalogoEditorial.getAllCatalogoEditoriales(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener registros de catalogo editorial' });
+    }
+}
+);
+
+/**
+ * Ruta para obtener un registro de CatalogoEditorial por su ID.
+ * Ejemplo de uso: GET /catalogo-editorial/123
+ */
+
+router.get('/catalogo-editorial/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoEditorial.getCatalogoEditorialById(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener un registro de catalogo editorial' });
+    }
+}
+);
+
+/**
+ * Ruta para crear un registro de CatalogoEditorial.
+ * Ejemplo de uso: POST /catalogo-editorial
+ */
+
+router.post('/catalogo-editorial', async (req: Request, res: Response) => {
+    try {
+        catalogoEditorial.createCatalogoEditorial(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un registro de catalogo editorial' });
+    }
+}
+);
+
+/**
+ * Ruta para actualizar un registro de CatalogoEditorial por su ID.
+ * Ejemplo de uso: PUT /catalogo-editorial/456
+ */
+
+router.put('/catalogo-editorial/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoEditorial.updateCatalogoEditorial(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar un registro de catalogo editorial' });
+    }
+}
+);
+
+/**
+ * Ruta para eliminar un registro de CatalogoEditorial por su ID.
+ * Ejemplo de uso: DELETE /catalogo-editorial/789
+ */
+
+router.delete('/catalogo-editorial/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoEditorial.deleteCatalogoEditorial(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar un registro de catalogo editorial' });
+    }
+}
+);
+
+/**
+ * Ruta para obtener todos los registros de CatalogoClasificacion.
+ * Ejemplo de uso: GET /catalogo-clasificacion
+ */
+
+router.get('/catalogo-clasificacion', async (req: Request, res: Response) => {
+    try {
+        catalogoClasificacion.getAllCatalogoClasificaciones(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener registros de catalogo clasificacion' });
+    }
+}
+);
+
+/**
+ * Ruta para obtener un registro de CatalogoClasificacion por su ID.
+ * Ejemplo de uso: GET /catalogo-clasificacion/123
+ */
+
+router.get('/catalogo-clasificacion/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoClasificacion.getCatalogoClasificacionById(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener un registro de catalogo clasificacion' });
+    }
+}
+);
+
+/**
+ * Ruta para crear un registro de CatalogoClasificacion.
+ * Ejemplo de uso: POST /catalogo-clasificacion
+ */
+
+router.post('/catalogo-clasificacion', async (req: Request, res: Response) => {
+    try {
+        catalogoClasificacion.createCatalogoClasificacion(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un registro de catalogo clasificacion' });
+    }
+}
+);
+
+/**
+ * Ruta para actualizar un registro de CatalogoClasificacion por su ID.
+ * Ejemplo de uso: PUT /catalogo-clasificacion/456
+ */
+
+router.put('/catalogo-clasificacion/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoClasificacion.updateCatalogoClasificacion(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar un registro de catalogo clasificacion' });
+    }
+}
+);
+
+/**
+ * Ruta para eliminar un registro de CatalogoClasificacion por su ID.
+ * Ejemplo de uso: DELETE /catalogo-clasificacion/789
+ */
+
+router.delete('/catalogo-clasificacion/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoClasificacion.deleteCatalogoClasificacion(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar un registro de catalogo clasificacion' });
+    }
+}
+);
+
+/**
+ * Ruta para obtener todos los registros de CatalogoSeccion.
+ * Ejemplo de uso: GET /catalogo-seccion
+ */
+
+router.get('/catalogo-seccion', async (req: Request, res: Response) => {
+    try {
+        catalogoSeccion.getAllCatalogoSecciones(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener registros de catalogo seccion' });
+    }
+}
+);
+
+/**
+ * Ruta para obtener un registro de CatalogoSeccion por su ID.
+ * Ejemplo de uso: GET /catalogo-seccion/123
+ */
+
+router.get('/catalogo-seccion/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoSeccion.getCatalogoSeccionById(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener un registro de catalogo seccion' });
+    }
+}
+);
+
+/**
+ * Ruta para crear un registro de CatalogoSeccion.
+ * Ejemplo de uso: POST /catalogo-seccion
+ */
+
+router.post('/catalogo-seccion', async (req: Request, res: Response) => {
+    try {
+        catalogoSeccion.createCatalogoSeccion(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un registro de catalogo seccion' });
+    }
+}
+);
+
+/**
+ * Ruta para actualizar un registro de CatalogoSeccion por su ID.
+ * Ejemplo de uso: PUT /catalogo-seccion/456
+ */
+
+router.put('/catalogo-seccion/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoSeccion.updateCatalogoSeccion(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar un registro de catalogo seccion' });
+    }
+}
+);
+
+/**
+ * Ruta para eliminar un registro de CatalogoSeccion por su ID.
+ * Ejemplo de uso: DELETE /catalogo-seccion/789
+ */
+
+router.delete('/catalogo-seccion/:id', async (req: Request, res: Response) => {
+    try {
+        catalogoSeccion.deleteCatalogoSeccion(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar un registro de catalogo seccion' });
+    }
+}
+);
 
 export default router;

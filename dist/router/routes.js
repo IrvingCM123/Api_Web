@@ -41,6 +41,10 @@ const gestionUsuariosControllers = __importStar(require("../controllers/gestionu
 const prestamosControllers = __importStar(require("../controllers/prestamo_devolucion.controller"));
 const historialPrestamoControllers = __importStar(require("../controllers/historialPrestamo.controller"));
 const inventarioControllers = __importStar(require("../controllers/inventario.controller"));
+const catalogoGenero = __importStar(require("../controllers/catalogoGenero.controller"));
+const catalogoEditorial = __importStar(require("../controllers/catalogoEditorial.controller"));
+const catalogoClasificacion = __importStar(require("../controllers/catalogoClasificacion.controller"));
+const catalogoSeccion = __importStar(require("../controllers/catalogoSeccion.controller"));
 const router = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
 //Controladores para Libros
@@ -542,6 +546,266 @@ router.delete('/inventario/:ID_Articulo', (req, res) => __awaiter(void 0, void 0
     catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al eliminar el registro de inventario' });
+    }
+}));
+/**
+ * Ruta para obtener todos los registros de CatalogoGenero.
+ * Ejemplo de uso: GET /catalogo-genero
+ */
+router.get('/catalogo-genero', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoGenero.getAllCatalogoGeneros(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener registros de catalogo genero' });
+    }
+}));
+/**
+ * Ruta para obtener un registro de CatalogoGenero por su ID.
+ * Ejemplo de uso: GET /catalogo-genero/123
+ */
+router.get('/catalogo-genero/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoGenero.getCatalogoGeneroById(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener un registro de catalogo genero' });
+    }
+}));
+/**
+ * Ruta para crear un registro de CatalogoGenero.
+ * Ejemplo de uso: POST /catalogo-genero
+ */
+router.post('/catalogo-genero', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoGenero.createCatalogoGenero(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un registro de catalogo genero' });
+    }
+}));
+/**
+ * Ruta para actualizar un registro de CatalogoGenero por su ID.
+ * Ejemplo de uso: PUT /catalogo-genero/456
+ */
+router.put('/catalogo-genero/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoGenero.updateCatalogoGenero(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar un registro de catalogo genero' });
+    }
+}));
+/**
+ * Ruta para eliminar un registro de CatalogoGenero por su ID.
+ * Ejemplo de uso: DELETE /catalogo-genero/789
+ */
+router.delete('/catalogo-genero/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoGenero.deleteCatalogoGenero(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar un registro de catalogo genero' });
+    }
+}));
+/**
+ * Ruta para obtener todos los registros de CatalogoEditorial.
+ * Ejemplo de uso: GET /catalogo-editorial
+ */
+router.get('/catalogo-editorial', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoEditorial.getAllCatalogoEditoriales(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener registros de catalogo editorial' });
+    }
+}));
+/**
+ * Ruta para obtener un registro de CatalogoEditorial por su ID.
+ * Ejemplo de uso: GET /catalogo-editorial/123
+ */
+router.get('/catalogo-editorial/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoEditorial.getCatalogoEditorialById(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener un registro de catalogo editorial' });
+    }
+}));
+/**
+ * Ruta para crear un registro de CatalogoEditorial.
+ * Ejemplo de uso: POST /catalogo-editorial
+ */
+router.post('/catalogo-editorial', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoEditorial.createCatalogoEditorial(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un registro de catalogo editorial' });
+    }
+}));
+/**
+ * Ruta para actualizar un registro de CatalogoEditorial por su ID.
+ * Ejemplo de uso: PUT /catalogo-editorial/456
+ */
+router.put('/catalogo-editorial/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoEditorial.updateCatalogoEditorial(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar un registro de catalogo editorial' });
+    }
+}));
+/**
+ * Ruta para eliminar un registro de CatalogoEditorial por su ID.
+ * Ejemplo de uso: DELETE /catalogo-editorial/789
+ */
+router.delete('/catalogo-editorial/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoEditorial.deleteCatalogoEditorial(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar un registro de catalogo editorial' });
+    }
+}));
+/**
+ * Ruta para obtener todos los registros de CatalogoClasificacion.
+ * Ejemplo de uso: GET /catalogo-clasificacion
+ */
+router.get('/catalogo-clasificacion', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoClasificacion.getAllCatalogoClasificaciones(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener registros de catalogo clasificacion' });
+    }
+}));
+/**
+ * Ruta para obtener un registro de CatalogoClasificacion por su ID.
+ * Ejemplo de uso: GET /catalogo-clasificacion/123
+ */
+router.get('/catalogo-clasificacion/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoClasificacion.getCatalogoClasificacionById(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener un registro de catalogo clasificacion' });
+    }
+}));
+/**
+ * Ruta para crear un registro de CatalogoClasificacion.
+ * Ejemplo de uso: POST /catalogo-clasificacion
+ */
+router.post('/catalogo-clasificacion', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoClasificacion.createCatalogoClasificacion(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un registro de catalogo clasificacion' });
+    }
+}));
+/**
+ * Ruta para actualizar un registro de CatalogoClasificacion por su ID.
+ * Ejemplo de uso: PUT /catalogo-clasificacion/456
+ */
+router.put('/catalogo-clasificacion/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoClasificacion.updateCatalogoClasificacion(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar un registro de catalogo clasificacion' });
+    }
+}));
+/**
+ * Ruta para eliminar un registro de CatalogoClasificacion por su ID.
+ * Ejemplo de uso: DELETE /catalogo-clasificacion/789
+ */
+router.delete('/catalogo-clasificacion/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoClasificacion.deleteCatalogoClasificacion(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar un registro de catalogo clasificacion' });
+    }
+}));
+/**
+ * Ruta para obtener todos los registros de CatalogoSeccion.
+ * Ejemplo de uso: GET /catalogo-seccion
+ */
+router.get('/catalogo-seccion', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoSeccion.getAllCatalogoSecciones(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener registros de catalogo seccion' });
+    }
+}));
+/**
+ * Ruta para obtener un registro de CatalogoSeccion por su ID.
+ * Ejemplo de uso: GET /catalogo-seccion/123
+ */
+router.get('/catalogo-seccion/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoSeccion.getCatalogoSeccionById(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener un registro de catalogo seccion' });
+    }
+}));
+/**
+ * Ruta para crear un registro de CatalogoSeccion.
+ * Ejemplo de uso: POST /catalogo-seccion
+ */
+router.post('/catalogo-seccion', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoSeccion.createCatalogoSeccion(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear un registro de catalogo seccion' });
+    }
+}));
+/**
+ * Ruta para actualizar un registro de CatalogoSeccion por su ID.
+ * Ejemplo de uso: PUT /catalogo-seccion/456
+ */
+router.put('/catalogo-seccion/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoSeccion.updateCatalogoSeccion(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar un registro de catalogo seccion' });
+    }
+}));
+/**
+ * Ruta para eliminar un registro de CatalogoSeccion por su ID.
+ * Ejemplo de uso: DELETE /catalogo-seccion/789
+ */
+router.delete('/catalogo-seccion/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        catalogoSeccion.deleteCatalogoSeccion(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar un registro de catalogo seccion' });
     }
 }));
 exports.default = router;

@@ -26,11 +26,9 @@ export const getMagazineInfoByISSN = async (req: Request, res: Response) => {
         res.json(magazineData);
     } catch (error) {
         console.error(error);
-        res
-            .status(500)
-            .json({
-                error: "Error al obtener información de la revista desde Firestore",
-            });
+        res.status(500).json({
+            error: "Error al obtener información de la revista desde Firestore",
+        });
     }
 };
 
@@ -49,48 +47,60 @@ export const getAllAvailableISSNs = async (req: Request, res: Response) => {
 };
 
 // Controlador para registrar una revista en Firestore
-export const registerMagazineInFirestore = async (req: Request, res: Response) => {
+export const registerMagazineInFirestore = async (
+    req: Request,
+    res: Response
+) => {
     const { issn } = req.params;
     const {
         Titulo,
         Url_Portada,
-        Descripcion,
+        Resena,
         Autor,
-        Frecuencia_publicacion,
+        Clasificacion_Edad,
         Genero,
         Editorial,
-        Fecha_publicacion
+        Fecha_Publicacion,
+        PermitirVenta,
+        PermitirPrestamo,
+        PrecioVenta,
     } = req.body;
 
     try {
         // Verifica si la revista ya existe en Firestore
-        const existingMagazine = db.collection('Revistas').doc(issn);
+        const existingMagazine = db.collection("Revistas").doc(issn);
         const existing = await existingMagazine.get();
 
         if (existing.exists) {
-            return res.status(400).json({ error: 'La revista ya está registrada en Firestore' });
+            return res
+                .status(400)
+                .json({ error: "La revista ya está registrada en Firestore" });
         }
 
         // Crea un nuevo documento con los datos de la revista
-        await db.collection('Revistas').doc(issn).set({
+        await db.collection("Revistas").doc(issn).set({
             Titulo,
             Url_Portada,
-            Descripcion,
+            Resena,
             Autor,
-            Frecuencia_publicacion,
+            Clasificacion_Edad,
             Genero,
-            ISSN: issn,
             Editorial,
-            Fecha_publicacion
+            Fecha_Publicacion,
+            PermitirVenta,
+            PermitirPrestamo,
+            PrecioVenta,
         });
 
         // Guarda el ISSN en la base de datos usando el controlador saveISSN
         await saveISSN(issn);
 
-        res.json({ message: 'Revista registrada exitosamente en Firestore' });
+        res.json({ message: "Revista registrada exitosamente en Firestore" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error al registrar la revista en Firestore' });
+        res
+            .status(500)
+            .json({ error: "Error al registrar la revista en Firestore" });
     }
 };
 
@@ -124,6 +134,6 @@ export const eliminarRevista = async (req: Request, res: Response) => {
         res.json(revista);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error al eliminar la revista' });
+        res.status(500).json({ error: "Error al eliminar la revista" });
     }
-}
+};

@@ -59,6 +59,7 @@ model Libro {
   inventario Inventario[]
   // Relación con el modelo PrestamoDevolucion
   prestamos PrestamoDevolucion[] // Agrega esta relación inversa
+
 }
 
 // Definición del modelo Revista
@@ -140,5 +141,25 @@ model HistorialPrestamo {
   
   // Relación inversa con gestion usuario
   gestion_usuarios GestionUsuario[]
+}
+
+model CatalogoClasificacion {
+  id_catalogo_clasificacion Int @id @default(autoincrement())
+  nombre_catalogo_clasificacion String @db.VarChar(30)
+}
+
+model CatalogoEditorial {
+  id_catalogo_editorial Int @id @default(autoincrement())
+  nombre_catalogo_editorial String @db.VarChar(30)
+}
+
+model CatalogoSeccionBiblioteca {
+  id_catalogo_seccion_biblioteca Int @id @default(autoincrement())
+  nombre_catalogo_seccion_biblioteca String @db.VarChar(30)
+}
+
+model CatalogoGenero {
+  id_catalogo_genero Int @id @default(autoincrement())
+  nombre_catalogo_genero String @db.VarChar(30)
 }
 
