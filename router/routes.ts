@@ -78,6 +78,23 @@ router.post('/libros/:isbn', async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * Controlador para actualizar todos los registros de Libro.
+ *
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+
+router.put('/libros/:isbn', async (req: Request, res: Response) => {
+    try {
+        librosControllers.actualizarLibroByID(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar todos los libros' });
+    }
+}
+);
+
 //Controladores para usuarios
 
 
@@ -519,7 +536,7 @@ router.put('/inventario/:ID_Articulo', async (req: Request, res: Response) => {
  */
 router.delete('/inventario/:ID_Articulo', async (req: Request, res: Response) => {
     try {
-        inventarioControllers.deleteInventarioByID(req, res);
+        inventarioControllers.deleteInventarioByISBNorISSN(req, res);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al eliminar el registro de inventario' });

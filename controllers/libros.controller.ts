@@ -134,3 +134,51 @@ export const eliminarLibroByID = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error al eliminar libro' });
     }
 }
+
+// Controlador para actualizar la información de un libro en Firestore
+export const actualizarLibroByID = async (req: Request, res: Response) => {
+    const { isbn } = req.params;
+    const {
+        Titulo,
+        Url_Portada,
+        Resena,
+        Autor,
+        Clasificacion_Edad,
+        Genero,
+        Editorial,
+        Fecha_Publicacion,
+        PermitirVenta,
+        PermitirPrestamo,
+        PrecioVenta,
+    } = req.body;
+
+    try {
+        // Verifica si el libro ya existe en Firestore
+        const existingBook = db.collection('Libros').doc(isbn);
+        const existin = await existingBook.get();
+
+        if (!existin.exists) {
+            return res.status(404).json({ error: 'El libro no está registrado en Firestore' });
+        }
+
+        // Actualiza el documento con los nuevos datos
+        await existingBook.update({
+            Titulo,
+            Url_Portada,
+            Resena,
+            Autor,
+            Clasificacion_Edad,
+            Genero,
+            Editorial,
+            Fecha_Publicacion,
+            PermitirVenta,
+            PermitirPrestamo,
+            PrecioVenta,
+        });
+
+        res.json({ message: 'Información del libro actualizada exitosamente en Firestore' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar la información del libro en Firestore' });
+    }
+};
