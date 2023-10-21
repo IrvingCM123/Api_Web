@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteInventarioByID = exports.updateInventarioByID = exports.getInventarioByID = exports.getAllInventario = exports.createInventario = void 0;
+exports.deleteInventarioByISBNorISSN = exports.updateInventarioByID = exports.getInventarioByID = exports.getAllInventario = exports.createInventario = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 // Controlador para crear un nuevo registro en el inventario
@@ -105,20 +105,25 @@ const updateInventarioByID = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const { ISBN, ISSN, revista, libro, Seccion_Biblioteca, Numero_Copias, Copias_Disponibles, Copias_Disponibles_minimas, } = req.body;
     try {
         // Verificar si el registro de inventario existe
-        const inventarioExistente = yield prisma.inventario.findUnique({
-            where: { ID_Articulo: Number(ID_Articulo) },
+        const inventarioExistente = yield prisma.inventario.findFirst({
+            where: {
+                OR: [
+                    {
+                        ISBN: ID_Articulo
+                    },
+                    {
+                        ISSN: ID_Articulo
+                    }
+                ]
+            }
         });
         if (!inventarioExistente) {
             return res.status(404).json({ error: 'Registro de inventario no encontrado' });
         }
         // Actualizar el registro de inventario
         const inventarioActualizado = yield prisma.inventario.update({
-            where: { ID_Articulo: Number(ID_Articulo) },
+            where: { ID_Articulo: inventarioExistente.ID_Articulo },
             data: {
-                ISBN: ISBN || null,
-                ISSN: ISSN || null,
-                revista: revista || null,
-                libro: libro || null,
                 Seccion_Biblioteca,
                 Numero_Copias,
                 Copias_Disponibles,
@@ -133,20 +138,31 @@ const updateInventarioByID = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.updateInventarioByID = updateInventarioByID;
-// Controlador para eliminar un registro de inventario por su ID
-const deleteInventarioByID = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// Controlador para eliminar un registro de inventario por su ISBN o ISSN
+const deleteInventarioByISBNorISSN = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { ID_Articulo } = req.params;
     try {
         // Verificar si el registro de inventario existe
-        const inventarioExistente = yield prisma.inventario.findUnique({
-            where: { ID_Articulo: Number(ID_Articulo) },
+        const inventarioExistente = yield prisma.inventario.findFirst({
+            where: {
+                OR: [
+                    {
+                        ISBN: ID_Articulo
+                    },
+                    {
+                        ISSN: ID_Articulo
+                    }
+                ]
+            }
         });
         if (!inventarioExistente) {
             return res.status(404).json({ error: 'Registro de inventario no encontrado' });
         }
         // Eliminar el registro de inventario
         yield prisma.inventario.delete({
-            where: { ID_Articulo: Number(ID_Articulo) },
+            where: {
+                ID_Articulo: inventarioExistente.ID_Articulo
+            }
         });
         res.json({ message: 'Registro de inventario eliminado correctamente' });
     }
@@ -155,4 +171,4 @@ const deleteInventarioByID = (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.status(500).json({ error: 'Error al eliminar el registro de inventario' });
     }
 });
-exports.deleteInventarioByID = deleteInventarioByID;
+exports.deleteInventarioByISBNorISSN = deleteInventarioByISBNorISSN;

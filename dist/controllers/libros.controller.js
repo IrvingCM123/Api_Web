@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.eliminarLibroByID = exports.registerBookInFirestore = exports.saveISBN = exports.getAllAvailableISBNs = exports.getBookInfoByISBN = void 0;
+exports.actualizarLibroByID = exports.eliminarLibroByID = exports.registerBookInFirestore = exports.saveISBN = exports.getAllAvailableISBNs = exports.getBookInfoByISBN = void 0;
 const firebaseconfig_1 = require("../database/firebaseconfig");
 const client_1 = require("@prisma/client");
 const db = firebaseconfig_1.firebaseAdmin.firestore();
@@ -126,3 +126,36 @@ const eliminarLibroByID = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.eliminarLibroByID = eliminarLibroByID;
+// Controlador para actualizar la información de un libro en Firestore
+const actualizarLibroByID = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { isbn } = req.params;
+    const { Titulo, Url_Portada, Resena, Autor, Clasificacion_Edad, Genero, Editorial, Fecha_Publicacion, PermitirVenta, PermitirPrestamo, PrecioVenta, } = req.body;
+    try {
+        // Verifica si el libro ya existe en Firestore
+        const existingBook = db.collection('Libros').doc(isbn);
+        const existin = yield existingBook.get();
+        if (!existin.exists) {
+            return res.status(404).json({ error: 'El libro no está registrado en Firestore' });
+        }
+        // Actualiza el documento con los nuevos datos
+        yield existingBook.update({
+            Titulo,
+            Url_Portada,
+            Resena,
+            Autor,
+            Clasificacion_Edad,
+            Genero,
+            Editorial,
+            Fecha_Publicacion,
+            PermitirVenta,
+            PermitirPrestamo,
+            PrecioVenta,
+        });
+        res.json({ message: 'Información del libro actualizada exitosamente en Firestore' });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar la información del libro en Firestore' });
+    }
+});
+exports.actualizarLibroByID = actualizarLibroByID;

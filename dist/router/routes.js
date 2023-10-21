@@ -108,6 +108,21 @@ router.post('/libros/:isbn', (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.status(500).json({ error: 'Error al registrar el libro en Firestore' });
     }
 }));
+/**
+ * Controlador para actualizar todos los registros de Libro.
+ *
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+router.put('/libros/:isbn', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        librosControllers.actualizarLibroByID(req, res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar todos los libros' });
+    }
+}));
 //Controladores para usuarios
 /**
  * Controlador para obtener todos los usuarios.
@@ -541,7 +556,7 @@ router.put('/inventario/:ID_Articulo', (req, res) => __awaiter(void 0, void 0, v
  */
 router.delete('/inventario/:ID_Articulo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        inventarioControllers.deleteInventarioByID(req, res);
+        inventarioControllers.deleteInventarioByISBNorISSN(req, res);
     }
     catch (error) {
         console.error(error);
