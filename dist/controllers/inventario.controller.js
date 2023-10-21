@@ -16,7 +16,6 @@ const prisma = new client_1.PrismaClient();
 const createInventario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { Seccion_Biblioteca, Numero_Copias, Copias_Disponibles, Copias_Disponibles_minimas, } = req.body;
-        console.log(req);
         // Datos opcionales
         const { ISBN, ISSN, revista, libro } = req.body;
         // Filtrar campos opcionales que no son nulos
@@ -39,10 +38,16 @@ const createInventario = (req, res) => __awaiter(void 0, void 0, void 0, functio
             data.libro = libro;
         }
         // Crear un nuevo registro en el inventario
-        const inventario = yield prisma.inventario.create({
-            data,
-        });
-        res.status(201).json(inventario);
+        try {
+            const inventario = yield prisma.inventario.create({
+                data,
+            });
+            res.status(201).json(inventario);
+        }
+        catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Error al crear un registro en el inventario' });
+        }
     }
     catch (error) {
         console.error(error);
@@ -71,8 +76,17 @@ exports.getAllInventario = getAllInventario;
 const getInventarioByID = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { ID_Articulo } = req.params;
     try {
-        const inventario = yield prisma.inventario.findUnique({
-            where: { ID_Articulo: Number(ID_Articulo) },
+        const inventario = yield prisma.inventario.findFirst({
+            where: {
+                OR: [
+                    {
+                        ISBN: ID_Articulo
+                    },
+                    {
+                        ISSN: ID_Articulo
+                    }
+                ]
+            }
         });
         if (!inventario) {
             return res.status(404).json({ error: 'Registro de inventario no encontrado' });

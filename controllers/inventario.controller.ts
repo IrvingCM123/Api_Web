@@ -11,9 +11,6 @@ export const createInventario = async (req: Request, res: Response) => {
             Copias_Disponibles_minimas,
         } = req.body;
 
-        console.log(req)
-
-
         // Datos opcionales
         const { ISBN, ISSN, revista, libro } = req.body;
 
@@ -39,11 +36,16 @@ export const createInventario = async (req: Request, res: Response) => {
         }
 
         // Crear un nuevo registro en el inventario
-        const inventario = await prisma.inventario.create({
-            data,
-        });
+        try {
+            const inventario = await prisma.inventario.create({
+                data,
+            });
+            res.status(201).json(inventario);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Error al crear un registro en el inventario' });
+        }
 
-        res.status(201).json(inventario);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al crear un registro en el inventario' });
@@ -55,7 +57,7 @@ export const createInventario = async (req: Request, res: Response) => {
 export const getAllInventario = async (req: Request, res: Response) => {
     try {
         const inventario = await prisma.inventario.findMany({
-            include: 
+            include:
             {
                 libro: true,
                 revista: true,
@@ -72,9 +74,19 @@ export const getAllInventario = async (req: Request, res: Response) => {
 export const getInventarioByID = async (req: Request, res: Response) => {
     const { ID_Articulo } = req.params;
     try {
-        const inventario = await prisma.inventario.findUnique({
-            where: { ID_Articulo: Number(ID_Articulo) },
+        const inventario = await prisma.inventario.findFirst({
+            where: {
+                OR: [
+                    {
+                        ISBN: ID_Articulo
+                    },
+                    {
+                        ISSN: ID_Articulo
+                    }
+                ]
+            }
         });
+
         if (!inventario) {
             return res.status(404).json({ error: 'Registro de inventario no encontrado' });
         }

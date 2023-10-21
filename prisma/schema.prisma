@@ -105,15 +105,15 @@ model Inventario {
   // Campo de identificación autoincremental
   ID_Articulo   Int       @id @default(autoincrement())
   // Campo para el ISBN, opcional
-  ISBN   String?   @db.VarChar(20)
+  ISBN   String?   @db.VarChar(40)
   // Campo para el ISSN, opcional
-  ISSN   String?   @db.VarChar(20)
+  ISSN   String?   @db.VarChar(40)
   // Relación con el modelo Revista
   revista Revista? @relation(fields: [ISSN], references: [ISSN])
   // Relación con el modelo Libro
   libro Libro? @relation(fields: [ISBN], references: [ISBN])
   // Campo para la Sección de Biblioteca
-  Seccion_Biblioteca String @db.VarChar(10)
+  Seccion_Biblioteca String @db.VarChar(30)
   // Campo para el Número de Copias
   Numero_Copias Int @db.Integer
   // Campo para el Número de Copias Disponibles
