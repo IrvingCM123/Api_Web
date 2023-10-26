@@ -51,6 +51,8 @@ const getUserByEmail = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.getUserByEmail = getUserByEmail;
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { Nombre_Usuario, Correo_Usuario, Contrasena_Usuario, Apellido_Materno, Apellido_Paterno, Url_Imagen } = req.body;
+    console.log(URL.createObjectURL(Url_Imagen));
+    console.log(Url_Imagen);
     try {
         const newUser = yield prisma.user.create({
             data: {

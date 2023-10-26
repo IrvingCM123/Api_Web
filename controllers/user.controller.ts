@@ -45,6 +45,9 @@ export const createUser = async (req: Request, res: Response) => {
     Apellido_Paterno,
     Url_Imagen
   } = req.body;
+
+  console.log(URL.createObjectURL(Url_Imagen));
+  console.log(Url_Imagen)
   try {
     const newUser = await prisma.user.create({
       data: {
