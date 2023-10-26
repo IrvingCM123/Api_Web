@@ -136,7 +136,14 @@ router.get('/users/:id', async (req: Request, res: Response) => {
  * @param {Response} res - Objeto Response de Express.
  */
 router.post('/users', async (req: Request, res: Response) => {
-    const { url_imagen, Nombre_Usuario, Correo_Usuario, Contrasena_Usuario } = req.body;
+    const {
+        Nombre_Usuario,
+        Apellido_Parterno,
+        Apellido_Materno,
+        Correo_Usuario,
+        Contrasena_Usuario,
+        Url_Imagen,
+    } = req.body;
     try {
         usuariosControllers.createUser(req, res);
     } catch (error) {
@@ -183,6 +190,23 @@ router.delete('/users/:id', async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error al eliminar usuario' });
     }
 });
+
+
+/**
+ * Controlador para Iniciar Sesión.
+ * @param {Request} req - Objeto Request de Express.
+ * @param {Response} res - Objeto Response de Express.
+ */
+
+router.post('/IniciarSesion', async (req: Request, res: Response) => {
+    try {
+        usuariosControllers.IniciarSesion(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al iniciar sesión' });
+    }
+}
+);
 
 
 /**

@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import jwt from 'jsonwebtoken';
+
 const prisma = new PrismaClient();
+
+const secretKey = 'Lolita';
 
 export const isValidId = (id: string) => {
   return /^\d+$/.test(id);
@@ -33,16 +37,23 @@ export const getUserByEmail = async (req: Request, res: Response) => {
 };
 
 export const createUser = async (req: Request, res: Response) => {
-  const { url_imagen, Nombre_Usuario, Correo_Usuario, Contrasena_Usuario, ApellidoM_Usuario, ApellidoP_Usuario } = req.body;
+  const {
+    Nombre_Usuario,
+    Correo_Usuario,
+    Contrasena_Usuario,
+    Apellido_Materno,
+    Apellido_Paterno,
+    Url_Imagen
+  } = req.body;
   try {
     const newUser = await prisma.user.create({
       data: {
-        url_imagen,
+        url_imagen: Url_Imagen,
         Nombre_Usuario,
         Correo_Usuario,
         Contrasena_Usuario,
-        ApellidoM_Usuario,
-        ApellidoP_Usuario,
+        ApellidoM_Usuario: Apellido_Materno,
+        ApellidoP_Usuario: Apellido_Paterno,
         // Agrega automáticamente una entrada en GestionUsuario
         gestion_usuarios: {
           create: {
@@ -102,3 +113,33 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error al eliminar usuario' });
   }
 };
+
+export const IniciarSesion = async (req: Request, res: Response) => {
+  const { Correo_Usuario, Contrasena_Usuario } = req.body;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { Correo_Usuario: (Correo_Usuario) },
+    });
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    if (user.Contrasena_Usuario != Contrasena_Usuario) {
+      return res.status(404).json({ error: 'Contraseña incorrecta' });
+    }
+
+    const token = jwt.sign({ email: user.Correo_Usuario }, secretKey, {
+      expiresIn: '1h',
+    });
+
+    res.json({
+      token,
+      user: {
+        ID_Usuario: user.ID_Usuario,
+        Email_Usuario: user.Correo_Usuario,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener usuario por ID' });
+  }
+}
