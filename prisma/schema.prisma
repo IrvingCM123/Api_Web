@@ -15,15 +15,25 @@ model User {
   // Campo para la URL de la imagen, opcional
   url_imagen String? @db.VarChar(255)
   // Campo para el nombre de usuario
-  Nombre_Usuario String @db.VarChar(30)
+  Nombre_Usuario String? @db.VarChar(30)
   // Campo para el apellido de usuario
-  ApellidoP_Usuario String @db.VarChar(20)
+  ApellidoP_Usuario String? @db.VarChar(20)
   // Campo para el apellido de usuario
-  ApellidoM_Usuario String @db.VarChar(20)
+  ApellidoM_Usuario String? @db.VarChar(20)
   // Campo para el correo de usuario, único
-  Correo_Usuario String @unique @db.VarChar(30)
+  Correo_Usuario String? @unique @db.VarChar(30)
   // Campo para la contraseña de usuario
-  Contrasena_Usuario String @db.VarChar(30)
+  Contrasena_Usuario String? @db.VarChar(30)
+  // Campo para la descripcion 
+  Descripcion_Usuario String? @db.VarChar(255)
+  // Campo para la edad de usuario
+  Edad_Usuario Int? @db.Integer
+  // Campo para la ciudad de usuario
+  Ciudad_Usuario String? @db.VarChar(30)
+  // Campo para la direccion de usuario
+  Direccion_Usuario String? @db.VarChar(30)
+  // Campo para el telefono de usuario
+  Telefono_Usuario String? @db.VarChar(30)
   // Relación con el modelo GestionUsuario
   gestion_usuarios GestionUsuario[]
 

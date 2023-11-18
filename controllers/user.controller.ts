@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-import jwt from 'jsonwebtoken';
+import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-const secretKey = 'Lolita';
+const secretKey = "Lolita";
 
 export const isValidId = (id: string) => {
   return /^\d+$/.test(id);
@@ -16,23 +16,46 @@ export const getAllUsers = async (req: Request, res: Response) => {
     res.json(users);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error al obtener usuarios' });
+    res.status(500).json({ error: "Error al obtener usuarios" });
   }
 };
 
 export const getUserByEmail = async (req: Request, res: Response) => {
   const { id } = req.params;
+  
   try {
     const user = await prisma.user.findUnique({
-      where: { Correo_Usuario: (id) },
+      where: { Correo_Usuario: id },
     });
+    console.log("");
     if (!user) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+      return res.status(404).json({ error: "Usuario no encontrado" });
     }
-    await res.json(user);
+    res.json(user);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error al obtener usuario por ID' });
+    res.status(500).json({ error: "Error al obtener usuario por ID" });
+  }
+};
+
+export const ObtenerInfoUsuario = async (req: Request, res: Response) => {
+  const { authorization } = req.headers;
+  let separar = authorization?.split(" ");
+  let Token = separar![1];
+  const decoded = jwt.verify(Token, secretKey);
+  const { email } = decoded as { email: string };
+  
+  let id = email;
+  req.params.id = id;
+  try {
+    const user = getUserByEmail(req, res);
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+    await user;
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener usuario por ID" });
   }
 };
 
@@ -43,17 +66,16 @@ export const createUser = async (req: Request, res: Response) => {
     Contrasena_Usuario,
     Apellido_Materno,
     Apellido_Paterno,
-    Url_Imagen
+    Url_Imagen,
   } = req.body;
 
-  console.log(Url_Imagen)
   try {
     const newUser = await prisma.user.create({
       data: {
         url_imagen: Url_Imagen,
-        Nombre_Usuario,
-        Correo_Usuario,
-        Contrasena_Usuario,
+        Nombre_Usuario: Nombre_Usuario,
+        Correo_Usuario: Correo_Usuario,
+        Contrasena_Usuario: Contrasena_Usuario,
         ApellidoM_Usuario: Apellido_Materno,
         ApellidoP_Usuario: Apellido_Paterno,
         // Agrega automáticamente una entrada en GestionUsuario
@@ -70,32 +92,54 @@ export const createUser = async (req: Request, res: Response) => {
     res.status(201).json(newUser);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error al crear usuario' });
+    res.status(500).json({ error: "Error al crear usuario" });
   }
 };
 
 export const updateUser = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { url_imagen, Nombre_Usuario, Correo_Usuario, Contrasena_Usuario, ApellidoM_Usuario, ApellidoP_Usuario } = req.body;
-  if (!isValidId(id)) {
-    return res.status(400).json({ error: 'ID no válido' });
-  }
+
+  //Decodificar token
+  const { authorization } = req.headers;
+  let separar = authorization?.split(" ");
+  let Token = separar![1];
+  const decoded = jwt.verify(Token, secretKey);
+  const { email } = decoded as { email: string };
+  const { ID_Usuario } = decoded as { ID_Usuario: string };
+  const {
+    url_imagen,
+    Nombre_Usuario,
+    Correo_Usuario,
+    Contrasena_Usuario,
+    ApellidoM_Usuario,
+    ApellidoP_Usuario,
+    Descripcion_Usuario,
+    Edad_Usuario,
+    Telefono_Usuario,
+    Direccion_Usuario,
+    Ciudad_Usuario,
+  } = req.body;
+
   try {
     const updatedUser = await prisma.user.update({
-      where: { ID_Usuario: parseInt(id) },
+      where: { ID_Usuario: parseInt(ID_Usuario) },
       data: {
-        url_imagen,
-        Nombre_Usuario,
-        Correo_Usuario,
-        Contrasena_Usuario,
-        ApellidoM_Usuario,
-        ApellidoP_Usuario
+        url_imagen : url_imagen,
+        Nombre_Usuario : Nombre_Usuario,
+        Correo_Usuario : Correo_Usuario,
+        Contrasena_Usuario : Contrasena_Usuario,
+        ApellidoM_Usuario : ApellidoM_Usuario,
+        ApellidoP_Usuario : ApellidoP_Usuario,
+        Descripcion_Usuario : Descripcion_Usuario,
+        Edad_Usuario : Edad_Usuario,
+        Telefono_Usuario : Telefono_Usuario,
+        Direccion_Usuario : Direccion_Usuario,
+        Ciudad_Usuario : Ciudad_Usuario,
       },
     });
     res.json(updatedUser);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error al actualizar usuario' });
+    res.status(500).json({ error: "Error al actualizar usuario" });
   }
 };
 
@@ -103,7 +147,7 @@ export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   console.log(id);
   if (!isValidId(id)) {
-    return res.status(400).json({ error: 'ID no válido' });
+    return res.status(400).json({ error: "ID no válido" });
   }
   try {
     await prisma.user.delete({
@@ -112,25 +156,26 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.sendStatus(204);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error al eliminar usuario' });
+    res.status(500).json({ error: "Error al eliminar usuario" });
   }
 };
 
 export const IniciarSesion = async (req: Request, res: Response) => {
   const { Correo_Usuario, Contrasena_Usuario } = req.body;
+
   try {
     const user = await prisma.user.findUnique({
-      where: { Correo_Usuario: (Correo_Usuario) },
+      where: { Correo_Usuario: Correo_Usuario },
     });
     if (!user) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+      return res.status(404).json({ error: "Usuario no encontrado" });
     }
     if (user.Contrasena_Usuario != Contrasena_Usuario) {
-      return res.status(404).json({ error: 'Contraseña incorrecta' });
+      return res.status(404).json({ error: "Contraseña incorrecta" });
     }
 
-    const token = jwt.sign({ email: user.Correo_Usuario }, secretKey, {
-      expiresIn: '1h',
+    const token = jwt.sign({ email: user.Correo_Usuario, ID_Usuario: user.ID_Usuario }, secretKey, {
+      //expiresIn: "1h",
     });
 
     res.json({
@@ -142,6 +187,6 @@ export const IniciarSesion = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error al obtener usuario por ID' });
+    res.status(500).json({ error: "Error al obtener usuario por ID" });
   }
-}
+};
