@@ -94,6 +94,7 @@ const registerMagazineInFirestore = (req, res) => __awaiter(void 0, void 0, void
             Autor,
             Clasificacion_Edad,
             Genero,
+            ISSN: issn,
             Editorial,
             Fecha_Publicacion,
             PermitirVenta,

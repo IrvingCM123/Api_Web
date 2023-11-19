@@ -105,6 +105,7 @@ export const registerMagazineInFirestore = async (
             Autor,
             Clasificacion_Edad,
             Genero,
+            ISSN: issn,
             Editorial,
             Fecha_Publicacion,
             PermitirVenta,
