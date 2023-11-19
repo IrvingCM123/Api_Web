@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.actualizarLibroByID = exports.eliminarLibroByID = exports.registerBookInFirestore = exports.saveISBN = exports.getAllAvailableISBNs = exports.getBookInfoByISBN = void 0;
+exports.actualizarLibroByID = exports.eliminarLibroByID = exports.registerBookInFirestore = exports.saveISBN = exports.getAllAvailableISBNs = exports.ObtenerLibros = exports.getBookInfoByISBN = void 0;
 const firebaseconfig_1 = require("../database/firebaseconfig");
 const client_1 = require("@prisma/client");
 const db = firebaseconfig_1.firebaseAdmin.firestore();
@@ -21,13 +21,13 @@ const getBookInfoByISBN = (req, res) => __awaiter(void 0, void 0, void 0, functi
         // Obtén el documento del libro desde Firestore
         const bookDoc = db.collection("Libros").doc(isbn);
         const book = yield bookDoc.get();
-        console.log(bookDoc);
         if (!book.exists) {
             return res
                 .status(404)
                 .json({ error: "Libro no encontrado en Firestore" });
         }
         const bookData = book.data();
+        console.log(bookData, "bookData");
         res.json(bookData);
     }
     catch (error) {
@@ -40,6 +40,28 @@ const getBookInfoByISBN = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getBookInfoByISBN = getBookInfoByISBN;
+function ObtenerLibros(Libro) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            // Obtén el documento del libro desde Firestore
+            const bookDoc = db.collection("Libros").doc(Libro);
+            const book = yield bookDoc.get();
+            if (!book.exists) {
+                return ({ error: "Libro no encontrado en Firestore" });
+            }
+            const bookData = book.data();
+            return (bookData);
+        }
+        catch (error) {
+            console.error(error);
+            return ({
+                error: "Error al obtener información del libro desde Firestore",
+            });
+        }
+    });
+}
+exports.ObtenerLibros = ObtenerLibros;
+;
 // Controlador para obtener todos los ISBN disponibles desde la base de datos configurada en schema.prisma
 const getAllAvailableISBNs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

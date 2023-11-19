@@ -1,17 +1,53 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+
+import { ObtenerLibros } from './libros.controller';
+
+import { ObtenerRevistas } from './revistas.controller';
+
 const prisma = new PrismaClient();
 
 // Controlador para obtener todos los préstamos y devoluciones
 export const getAllPrestamos = async (req: Request, res: Response) => {
     try {
-        const prestamosDevoluciones = await prisma.prestamoDevolucion.findMany(
+        let prestamosDevoluciones: any = await prisma.prestamoDevolucion.findMany(
             {
                 where: {
                     Status: true,
                 }
             }
         );
+
+        for (let i = 0; i < prestamosDevoluciones.length; i++) {
+            let usuario = await prisma.user.findFirst({
+                where: {
+                    ID_Usuario: prestamosDevoluciones[i].ID_Usuario,
+                },
+                select: {
+                    Correo_Usuario: true,
+                }
+            });
+            prestamosDevoluciones[i].ID_Usuario = usuario?.Correo_Usuario;
+        }
+
+        for (let i = 0; i < prestamosDevoluciones.length; i++) {
+
+            if (prestamosDevoluciones[i].ISBN != null) {
+                let isbn = prestamosDevoluciones[i].ISBN;
+                let articulo:any = await ObtenerLibros(isbn);
+                prestamosDevoluciones[i].Titulo = articulo?.Titulo;
+                console.log("Entro")
+            }
+            if (prestamosDevoluciones[i].ISSN != null) {
+                let issn = prestamosDevoluciones[i].ISSN;
+                let articulo:any = await ObtenerRevistas(issn);
+                prestamosDevoluciones[i].Titulo = articulo?.Titulo;
+                console.log("Entro 2")
+            }
+
+            console.log(prestamosDevoluciones[i].Titulo);
+        }
+
         res.json(prestamosDevoluciones);
     } catch (error) {
         console.error(error);
@@ -21,13 +57,43 @@ export const getAllPrestamos = async (req: Request, res: Response) => {
 
 export const getAllDevoluciones = async (req: Request, res: Response) => {
     try {
-        const prestamosDevoluciones = await prisma.prestamoDevolucion.findMany(
+        const prestamosDevoluciones: any = await prisma.prestamoDevolucion.findMany(
             {
                 where: {
                     Status: false,
                 }
             }
         );
+
+        for (let i = 0; i < prestamosDevoluciones.length; i++) {
+            let usuario = await prisma.user.findFirst({
+                where: {
+                    ID_Usuario: prestamosDevoluciones[i].ID_Usuario,
+                },
+                select: {
+                    Correo_Usuario: true,
+                }
+            });
+            prestamosDevoluciones[i].ID_Usuario = usuario?.Correo_Usuario;
+        }
+
+        for (let i = 0; i < prestamosDevoluciones.length; i++) {
+
+            if (prestamosDevoluciones[i].ISBN != null) {
+                let isbn = prestamosDevoluciones[i].ISBN;
+                let articulo:any = await ObtenerLibros(isbn);
+                prestamosDevoluciones[i].Titulo = articulo?.Titulo;
+                console.log("Entro")
+            }
+            if (prestamosDevoluciones[i].ISSN != null) {
+                let issn = prestamosDevoluciones[i].ISSN;
+                let articulo:any = await ObtenerRevistas(issn);
+                prestamosDevoluciones[i].Titulo = articulo?.Titulo;
+                console.log("Entro 2")
+            }
+        }
+
+
         res.json(prestamosDevoluciones);
     } catch (error) {
         console.error(error);

@@ -381,7 +381,7 @@ router.delete("/gestion-usuarios/:id", async (req: Request, res: Response) => {
 });
 
 // Ruta para crear un nuevo préstamo/devolución
-router.post("/prestamos-devoluciones", async (req: Request, res: Response) => {
+router.post("/prestamos", async (req: Request, res: Response) => {
     try {
         prestamosControllers.createPrestamo(req, res);
     } catch (error) {
@@ -392,7 +392,7 @@ router.post("/prestamos-devoluciones", async (req: Request, res: Response) => {
 
 // Ruta para realizar una devolución
 router.post(
-    "/prestamos-devoluciones/:ID_Prestamo",
+    "/prestamos/:ID_Prestamo",
     async (req: Request, res: Response) => {
         const { ID_Prestamo } = req.params;
         try {

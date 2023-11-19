@@ -32,6 +32,26 @@ export const getMagazineInfoByISSN = async (req: Request, res: Response) => {
     }
 };
 
+export async function ObtenerRevistas(Revista: any) {
+    try {
+        // Obtén el documento de la revista desde Firestore
+        const magazineDoc = db.collection("Revistas").doc(Revista);
+
+        const magazine = await magazineDoc.get();
+
+        if (!magazine.exists) {
+            return ({ error: "Revista no encontrada en Firestore" });
+        }
+
+        const magazineData = magazine.data();
+        return (magazineData);
+    } catch (error) {
+        console.error(error);
+        return ({
+            error: "Error al obtener información de la revista desde Firestore",
+        });
+    }
+}
 // Controlador para obtener todos los ISSN disponibles desde la base de datos configurada en schema.prisma
 export const getAllAvailableISSNs = async (req: Request, res: Response) => {
     try {

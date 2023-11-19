@@ -11,15 +11,43 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.realizarDevolucion = exports.createPrestamo = exports.deleteDevolucionesByID = exports.deleteAllDevoluciones = exports.deletePrestamosByID = exports.deleteAllPrestamos = exports.getAllDevoluciones = exports.getAllPrestamos = void 0;
 const client_1 = require("@prisma/client");
+const libros_controller_1 = require("./libros.controller");
+const revistas_controller_1 = require("./revistas.controller");
 const prisma = new client_1.PrismaClient();
 // Controlador para obtener todos los préstamos y devoluciones
 const getAllPrestamos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const prestamosDevoluciones = yield prisma.prestamoDevolucion.findMany({
+        let prestamosDevoluciones = yield prisma.prestamoDevolucion.findMany({
             where: {
                 Status: true,
             }
         });
+        for (let i = 0; i < prestamosDevoluciones.length; i++) {
+            let usuario = yield prisma.user.findFirst({
+                where: {
+                    ID_Usuario: prestamosDevoluciones[i].ID_Usuario,
+                },
+                select: {
+                    Correo_Usuario: true,
+                }
+            });
+            prestamosDevoluciones[i].ID_Usuario = usuario === null || usuario === void 0 ? void 0 : usuario.Correo_Usuario;
+        }
+        for (let i = 0; i < prestamosDevoluciones.length; i++) {
+            if (prestamosDevoluciones[i].ISBN != null) {
+                let isbn = prestamosDevoluciones[i].ISBN;
+                let articulo = yield (0, libros_controller_1.ObtenerLibros)(isbn);
+                prestamosDevoluciones[i].Titulo = articulo === null || articulo === void 0 ? void 0 : articulo.Titulo;
+                console.log("Entro");
+            }
+            if (prestamosDevoluciones[i].ISSN != null) {
+                let issn = prestamosDevoluciones[i].ISSN;
+                let articulo = yield (0, revistas_controller_1.ObtenerRevistas)(issn);
+                prestamosDevoluciones[i].Titulo = articulo === null || articulo === void 0 ? void 0 : articulo.Titulo;
+                console.log("Entro 2");
+            }
+            console.log(prestamosDevoluciones[i].Titulo);
+        }
         res.json(prestamosDevoluciones);
     }
     catch (error) {
@@ -35,6 +63,31 @@ const getAllDevoluciones = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 Status: false,
             }
         });
+        for (let i = 0; i < prestamosDevoluciones.length; i++) {
+            let usuario = yield prisma.user.findFirst({
+                where: {
+                    ID_Usuario: prestamosDevoluciones[i].ID_Usuario,
+                },
+                select: {
+                    Correo_Usuario: true,
+                }
+            });
+            prestamosDevoluciones[i].ID_Usuario = usuario === null || usuario === void 0 ? void 0 : usuario.Correo_Usuario;
+        }
+        for (let i = 0; i < prestamosDevoluciones.length; i++) {
+            if (prestamosDevoluciones[i].ISBN != null) {
+                let isbn = prestamosDevoluciones[i].ISBN;
+                let articulo = yield (0, libros_controller_1.ObtenerLibros)(isbn);
+                prestamosDevoluciones[i].Titulo = articulo === null || articulo === void 0 ? void 0 : articulo.Titulo;
+                console.log("Entro");
+            }
+            if (prestamosDevoluciones[i].ISSN != null) {
+                let issn = prestamosDevoluciones[i].ISSN;
+                let articulo = yield (0, revistas_controller_1.ObtenerRevistas)(issn);
+                prestamosDevoluciones[i].Titulo = articulo === null || articulo === void 0 ? void 0 : articulo.Titulo;
+                console.log("Entro 2");
+            }
+        }
         res.json(prestamosDevoluciones);
     }
     catch (error) {

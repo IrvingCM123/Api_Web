@@ -383,7 +383,7 @@ router.delete("/gestion-usuarios/:id", (req, res) => __awaiter(void 0, void 0, v
     }
 }));
 // Ruta para crear un nuevo préstamo/devolución
-router.post("/prestamos-devoluciones", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/prestamos", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         prestamosControllers.createPrestamo(req, res);
     }
@@ -393,7 +393,7 @@ router.post("/prestamos-devoluciones", (req, res) => __awaiter(void 0, void 0, v
     }
 }));
 // Ruta para realizar una devolución
-router.post("/prestamos-devoluciones/:ID_Prestamo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/prestamos/:ID_Prestamo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { ID_Prestamo } = req.params;
     try {
         prestamosControllers.realizarDevolucion(req, res);

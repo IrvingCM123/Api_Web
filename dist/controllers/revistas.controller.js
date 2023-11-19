@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.eliminarRevista = exports.saveISSN = exports.registerMagazineInFirestore = exports.getAllAvailableISSNs = exports.getMagazineInfoByISSN = void 0;
+exports.eliminarRevista = exports.saveISSN = exports.registerMagazineInFirestore = exports.getAllAvailableISSNs = exports.ObtenerRevistas = exports.getMagazineInfoByISSN = void 0;
 const firebaseconfig_1 = require("../database/firebaseconfig");
 const client_1 = require("@prisma/client");
 const db = firebaseconfig_1.firebaseAdmin.firestore();
@@ -37,6 +37,27 @@ const getMagazineInfoByISSN = (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.getMagazineInfoByISSN = getMagazineInfoByISSN;
+function ObtenerRevistas(Revista) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            // Obtén el documento de la revista desde Firestore
+            const magazineDoc = db.collection("Revistas").doc(Revista);
+            const magazine = yield magazineDoc.get();
+            if (!magazine.exists) {
+                return ({ error: "Revista no encontrada en Firestore" });
+            }
+            const magazineData = magazine.data();
+            return (magazineData);
+        }
+        catch (error) {
+            console.error(error);
+            return ({
+                error: "Error al obtener información de la revista desde Firestore",
+            });
+        }
+    });
+}
+exports.ObtenerRevistas = ObtenerRevistas;
 // Controlador para obtener todos los ISSN disponibles desde la base de datos configurada en schema.prisma
 const getAllAvailableISSNs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

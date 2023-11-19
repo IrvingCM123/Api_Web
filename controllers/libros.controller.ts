@@ -8,15 +8,12 @@ const prisma = new PrismaClient();
 
 // Controlador para obtener información de un libro por ISBN desde Firestore
 export const getBookInfoByISBN = async (req: Request, res: Response) => {
-
     const { isbn } = req.params;
-
     try {
         // Obtén el documento del libro desde Firestore
         const bookDoc = db.collection("Libros").doc(isbn);
 
         const book = await bookDoc.get();
-        console.log(bookDoc)
         if (!book.exists) {
             return res
                 .status(404)
@@ -24,12 +21,33 @@ export const getBookInfoByISBN = async (req: Request, res: Response) => {
         }
 
         const bookData = book.data();
+        console.log(bookData, "bookData");
         res.json(bookData);
     } catch (error) {
         console.error(error);
         res
             .status(500)
             .json({
+                error: "Error al obtener información del libro desde Firestore",
+            });
+    }
+};
+
+export async function ObtenerLibros(Libro: any) {
+    try {
+        // Obtén el documento del libro desde Firestore
+        const bookDoc = db.collection("Libros").doc(Libro);
+
+        const book = await bookDoc.get();
+        if (!book.exists) {
+            return ({ error: "Libro no encontrado en Firestore" });
+        }
+
+        const bookData = book.data();
+        return (bookData);
+    } catch (error) {
+        console.error(error);
+        return ({
                 error: "Error al obtener información del libro desde Firestore",
             });
     }
